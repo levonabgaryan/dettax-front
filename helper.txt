@@ -1,0 +1,19 @@
+------------------
+Component
+
+ng generate component user
+ng g c user
+
+src/app/user/
+├── user.ts          ← логика
+├── user.html        ← шаблон
+├── user.scss        ← стили
+└── user.spec.ts     ← тесты
+
+Every component within <body> can be considered as component
+
+Sobre nós - about us
+Delícias à Mesa - Delicacies on the Table
+Pesquisar receita - Search for a recipe
+Receitas mais procuradas - Most popular recipes
+Ver receita - View recipe
