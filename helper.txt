@@ -17,3 +17,9 @@ Delícias à Mesa - Delicacies on the Table
 Pesquisar receita - Search for a recipe
 Receitas mais procuradas - Most popular recipes
 Ver receita - View recipe
+
+ng add angular-eslint
+npm i --save-dev prettier eslint-config-prettier eslint-plugin-prettier
+const eslintPluginPrettierRecommended = require('eslint-plugin-prettier/recommended');
+"lint:fix": "ng lint --fix",
+"prettier": "prettier --write ."
