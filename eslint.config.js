@@ -25,6 +25,7 @@ module.exports = defineConfig([
           style: 'camelCase',
         },
       ],
+      '@angular-eslint/prefer-inject': 'off',
       '@angular-eslint/component-selector': [
         'error',
         {
@@ -33,6 +34,16 @@ module.exports = defineConfig([
           style: 'kebab-case',
         },
       ],
+      '@typescript-eslint/explicit-member-accessibility': [
+        'error',
+        {
+          accessibility: 'explicit',
+          overrides: {
+            constructors: 'no-public',
+          },
+        },
+      ],
+      '@typescript-eslint/explicit-function-return-type': 'error',
     },
   },
   {

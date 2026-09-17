@@ -1,8 +1,15 @@
+DOM — это древовидная структура объектов в памяти браузера.
+      Каждый HTML-тег, текст, атрибут представлен объектом. Корневой объект — document, который представляет всю страницу.
 ------------------
 Component
 
-ng generate component user
-ng g c user
+- ng generate component user
+  ng g c user
+- ng generate service <>
+- ng generate directive <>
+- ng generate pipe <>
+- ng generate guard <>
+- ng g interceptor
 
 src/app/user/
 ├── user.ts          ← логика
@@ -23,3 +30,174 @@ npm i --save-dev prettier eslint-config-prettier eslint-plugin-prettier
 const eslintPluginPrettierRecommended = require('eslint-plugin-prettier/recommended');
 "lint:fix": "ng lint --fix",
 "prettier": "prettier --write ."
+
+
+Рецепт с ID 999 не существует - Ожидаемое "не найдено" - Вернуть null
+API вернул рецепт без name - Сломанные данные - Бросить исключение
+
+Use-case вообще ничего не ловит — он просто делегирует:
+А различие между null и throw обрабатывается в UI:
+
+Где написать ошибку в application или в adapter.
+Прежде чем выбирать слой для ошибки, спросите: кому принадлежит правило "у рецепта должно быть имя"?
+Это правило домена. Рецепт без имени — это не рецепт. Это часть определения сущности Recipe.
+Это правильно потому что, все равно мы все ошибки будем ловить на ui
+
+
+Angular DI
+binding - app.config.ts
+Use InjectionToken somewhere, and @Injectable() above the Adapter class.
+
+Routes
+app.routes.ts
+
+Angular things
+inject function - to get dependencies
+signal function - Informs to Angular about a component changes.
+                  `readonly recipe = signal<Recipe | null>(null);`
+                  recipe can be only Recipe or null.
+
+import: [] - Components, directives, pipes, modules, etc. which are being used within current component
+
+selector - it will be the name of the component
+           selector: armen ->  <armen></armen>
+
+Hook - a method, which calls somehow, without our usage.
+
+@Input - A decorator, which allows angular, to provide the field from the parent component to child(inner) component.
+```
+// Ребёнок
+@Component({
+  selector: 'app-recipe-card',
+  template: `<h3>{{ recipe.getName() }}</h3>`,
+})
+export class RecipeCard {
+  @Input() recipe!: Recipe;  // ← принимает от родителя
+}
+
+// Родитель
+@Component({
+  selector: 'app-recipe-list',
+  imports: [RecipeCard],
+  template: `
+    @for (r of recipes(); track r.getId()) {
+      <app-recipe-card [recipe]="r" />  <!-- ← передаёт ребёнку -->
+    }
+  `,
+})
+export class RecipeList {
+  readonly recipes = signal<Recipe[]>([]);
+}
+```
+
+Angular components have life cycle from creation to destruction.
+And there are several points within creation and destruction.
+And every cycle has its Interface.
+Angular Interfaces and methods:
+There are 9 of them
+1) constructor
+2) OnChanges, ngOnChanges
+3) OnInit, ngOnInit
+4) DoCheck, ngDoCheck
+5) AfterContentInit, ngAfterContentInit
+6) AfterContentChecked, ngAfterContentChecked -
+7) AfterViewInit, ngAfterViewInit -
+8) AfterViewChecked, ngAfterViewChecked -
+9) OnDestroy, ngOnDestroy
+
+Every component stage -> CREATE, UPDATE, DELETE
+1) CREATE
+   . constructor - When DI services is being provided to component constructor
+   . ngOnChanges - When parent passes a value into a child(current component)
+   . ngOnInit - When we need to provide data dor the component.
+   . ngAfterViewInit - When view(current html template) is drawn
+   . ngAfterContentInit - no need (when parent gives a html component into the child)
+
+2) UPDATE
+   . ngDoCheck - no need
+   . ngOnChanges - When parent changes value
+   . ngAfterViewChecked - no need
+   . ngAfterContentChecked - no need
+
+3) DESTROY(DELETE)
+   . ngOnDestroy - For instance, here we are supposed to unsubscribe all of the evenListeners.
+
+
+------------------------------
+Angular syntax
+1) {{ }} - To put any text in the text field of element.
+ `<h1>{{ recipe.getName() }}</h1>`
+ We can't do thing like these:
+ - {{ x = 5 }}
+ - new, function, return
+ Only expressions
+
+2) [] - To put data in ELEMENT (not class) property
+        For example img element has src property
+        ```
+        <img [src]="recipe.getImageUrl()" />
+        ```
+3) () - To bind an eventListener
+        `<button (click)="loadRecipe()">Load</button>`
+        $event - A special variable which contains DOM event object
+                 `<input (input)="onInput($event)" />` -> `onInput(event: Event): void {
+                                                            const target = event.target as HTMLInputElement;
+                                                            console.log(target.value);
+                                                          }`
+
+Things like recipe.getName(), recipe.getImageUrl(), loadRecipe() are component class fields or methods, (recipe, loadRecipe)
+
+4) Control flow — @if, @for, @switch
+   ```
+   @if (isLoading()) {
+     <p>Loading...</p>
+   } @else if (error()) {
+     <p>{{ error() }}</p>
+   } @else {
+     <p>Ready</p>
+   }
+   ```
+   The code above is equal to the code below
+   ```
+   if (component.isLoading()) {
+     // создать <p>Loading...</p>
+   } else if (component.error()) {
+     // создать <p>{{ error() }}</p>
+   } else {
+     // создать <p>Ready</p>
+   }
+   ```
+   isLoading, error are just custom components methods or fields.
+
+   ```
+   @for (r of recipes(); track r.getId()) {
+     <app-recipe-card [recipe]="r" />
+   }
+   ```
+   Без track Angular при изменении массива пересоздаёт все элементы. С track — обновляет только те, что изменились.
+
+   ```
+   @switch (status()) {
+     @case ('loading') { <p>Loading...</p> }
+     @case ('success') { <p>Success</p> }
+     @default { <p>Unknown</p> }
+   }
+   ```
+
+   A component html file is not able to read private fields.methods.
+------------------------------
+
+
+------------------------------
+Steps
+1) Create domain, application, infra layer
+2) Create a component with 3 fields, isLoading, errorMessage, <entityName>
+3) Create, component, write html/css
+4) Add root into app.routes.ts
+5) Header and footer should be written into app.html
+   App component should no about header and footer in its import
+   `  imports: [RouterOutlet, Header, Footer],  // ← регистрируем`, rather than in app.routes.
+------------------------------
+
+Через html раньше создали все странницы верно?
+И header и footer всегда копировались. Т.е. было несколько DOM да?

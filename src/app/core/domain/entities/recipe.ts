@@ -1,27 +1,56 @@
-class Recipe {
-  private readonly id: number;
+import { Entity } from './entity';
+
+export class Recipe extends Entity {
   private readonly name: string;
   private readonly category: string;
   private readonly description: string;
-  private area: string; // The name of the country
-  private imgUrl: string | null = null;
-  private ingredients: string[];
+  private readonly area: string; // The name of the country
+  private readonly imgUrl: string | null = null;
+  private readonly ingredients: Set<string>;
 
   constructor(
     id: number,
     name: string,
+    area: string,
     category: string,
     description: string,
-    area: string,
-    imgUrl: string | null,
-    ingredients: string[],
+    ingredients: Set<string>,
+    imgUrl: string | null = null,
   ) {
-    this.id = id;
+    super(id);
     this.name = name;
+    this.area = area;
     this.category = category;
     this.description = description;
-    this.area = area;
-    this.imgUrl = imgUrl;
     this.ingredients = ingredients;
+    this.imgUrl = imgUrl;
+  }
+
+  public getName(): string {
+    return this.name;
+  }
+
+  public getCategory(): string {
+    return this.category;
+  }
+
+  public getDescription(): string {
+    return this.description;
+  }
+
+  public getArea(): string {
+    return this.area;
+  }
+
+  public getImageUrl(): string | null {
+    return this.imgUrl;
+  }
+
+  public getIngredients(): ReadonlySet<string> {
+    return new Set(this.ingredients);
+  }
+
+  public addIngredient(ingredient: string): void {
+    this.ingredients.add(ingredient);
   }
 }

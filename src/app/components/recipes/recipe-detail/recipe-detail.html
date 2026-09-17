@@ -1,0 +1,23 @@
+@if (isLoading()) {
+  <p>Loading ...</p>
+} @else if (errorMessage()) {
+  <p style="color: red">{{ errorMessage() }}</p>
+} @else {
+  @if (recipe(); as r) {
+    <h1>{{ r.getName() }}</h1>
+    <p>{{ r.getDescription() }}</p>
+
+    @if (r.getImageUrl(); as imgUrl) {
+      <img [ngSrc]="imgUrl" [alt]="r.getName()" width="300" height="300" />
+    }
+
+    <h2>Ingredients</h2>
+    <ul>
+      @for (ing of r.getIngredients(); track ing) {
+        <li>{{ ing }}</li>
+      }
+    </ul>
+  } @else {
+    <p>Recipe not found</p>
+  }
+}
