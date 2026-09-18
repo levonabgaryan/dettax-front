@@ -67,8 +67,8 @@ export class HttpRecipeRepository implements IRecipeRepository {
       if (
         typeof ingredient !== 'string' ||
         typeof measurement !== 'string' ||
-        ingredient === "" ||
-        measurement === ""
+        ingredient === '' ||
+        measurement === ''
       ) {
         continue;
       }

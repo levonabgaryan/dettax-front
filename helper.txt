@@ -201,3 +201,8 @@ Steps
 
 Через html раньше создали все странницы верно?
 И header и footer всегда копировались. Т.е. было несколько DOM да?
+
+container padding helps, when hover doesn't fully cover the content???
+transition, transform
+// service, pipe
+

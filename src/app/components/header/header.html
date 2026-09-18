@@ -2,22 +2,22 @@
   <div class="decorative-bar"></div>
   <div class="header-content">
     <div class="header-content__logo">
-      <img ngSrc="/logo.png" alt="Logo" width="28" height="26">
-      <a href="#">Delicacies on the Table</a>
+      <img ngSrc="/header-logo.png" alt="Logo" width="28" height="26" />
+      <a routerLink="#" routerLinkActive="active">Delicacies on the Table</a>
     </div>
     <nav class="header-content__navigation">
       <ul>
-        <li><a href="#">Home</a></li>
-        <li><a href="#">Recipes</a></li>
-        <li><a href="#">About Us</a></li>
+        <li><a routerLink="#" routerLinkActive="active">Home</a></li>
+        <li><a routerLink="#" routerLinkActive="active">Recipes</a></li>
+        <li><a routerLink="#" routerLinkActive="active">About Us</a></li>
       </ul>
     </nav>
     <div class="header-content__search">
-      <input type="text" placeholder="Search for a recipe"/>
+      <input type="text" placeholder="Search for a recipe" />
     </div>
   </div>
-  <div class="header-img">
-    <img src="/img2.akspic.ru-vkusnaya_eda-italyanskaya_kuhnya-pasta-kulinariya-zavtrak-6000x4000.jpg" alt="">
+  <div class="hero">
+    <img ngSrc="/header-img.jpg" alt="" width="6000" height="4000" priority/>
     <p>Find inspiration, cook with heart, and enjoy unforgettable moments at the table.</p>
   </div>
 </header>
