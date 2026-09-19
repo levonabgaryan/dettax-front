@@ -15,16 +15,15 @@ footer {
 
   img {
     transform: translateY(-5.5px);
-
   }
   a {
     font-size: 3rem;
     font-weight: 600;
     text-decoration: none;
-    color: #2C2B2B;
+    color: #2c2b2b;
   }
   &:hover {
-    background-color: #FFE9A1;
+    background-color: #ffe9a1;
     border-radius: 999px;
   }
 }
@@ -42,7 +41,7 @@ footer {
 
     li {
       &:hover {
-        background-color: #FFE9A1;
+        background-color: #ffe9a1;
         border-radius: 8px;
       }
     }

@@ -6,6 +6,7 @@ import { NgOptimizedImage } from '@angular/common';
 
 @Component({
   selector: 'app-recipe-detail',
+  standalone: true,
   imports: [NgOptimizedImage],
   templateUrl: './recipe-detail.html',
   styleUrl: './recipe-detail.scss',

@@ -1,0 +1,25 @@
+@if (isLoading()) {
+  <p>Loading ...</p>
+} @else if (errorMessage())
+{
+  <p style="color: red"> {{errorMessage()}}</p>
+} @else {
+  <section class="home">
+  <h1>Find your preferred recipe by category</h1>
+  <div class="categories-list">
+    @for (categoryCard of allCategoryValueObjects(); track categoryCard.getName()){
+    <section class="category-card">
+      @if (categoryCard.getImgUrl(); as imgUrl){
+        <img [ngSrc]="imgUrl" [alt]="categoryCard.getName()" width="320" height="200">
+        <div class="category-card__content">
+          <h2 class="category-name">{{ categoryCard.getName() }}</h2>
+          <p class="category-description">{{ categoryCard.getDescription() }}</p>
+          <button>More</button>
+          <button>Related recipes</button>
+        </div>
+      }
+    </section>
+    }
+  </div>
+  </section>
+}

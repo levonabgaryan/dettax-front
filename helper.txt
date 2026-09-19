@@ -206,3 +206,8 @@ container padding helps, when hover doesn't fully cover the content???
 transition, transform
 // service, pipe
 
+
+display: -webkit-box;
+-webkit-line-clamp: 4;
+-webkit-box-orient: vertical;
+overflow: hidden;

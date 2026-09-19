@@ -1,8 +1,9 @@
 import { Entity } from './entity';
+import { CategoryValueObject } from '../value-objects/category-value-object';
 
 export class Recipe extends Entity {
   private readonly name: string;
-  private readonly category: string;
+  private readonly category: CategoryValueObject;
   private readonly description: string;
   private readonly area: string; // The name of the country
   private readonly imgUrl: string | null = null;
@@ -12,7 +13,7 @@ export class Recipe extends Entity {
     id: number,
     name: string,
     area: string,
-    category: string,
+    category: CategoryValueObject,
     description: string,
     ingredients: Set<string>,
     imgUrl: string | null = null,
@@ -30,8 +31,8 @@ export class Recipe extends Entity {
     return this.name;
   }
 
-  public getCategory(): string {
-    return this.category;
+  public getCategoryName(): string {
+    return this.category.getName();
   }
 
   public getDescription(): string {

@@ -1,4 +1,4 @@
-export abstract class WeatherForecastError extends Error {
+export abstract class RecipeStoreError extends Error {
   public readonly timestamp: Date;
 
   protected constructor(message: string, cause?: unknown) {

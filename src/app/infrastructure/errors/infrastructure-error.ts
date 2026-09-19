@@ -1,7 +1,7 @@
-import { WeatherForecastError } from '../../weather-forecast-error';
+import { RecipeStoreError } from '../../recipe-store-error';
 
-export abstract class InfrastructureError extends WeatherForecastError {
-  protected constructor(message: string, cause?: unknown) {
+export abstract class InfrastructureError extends RecipeStoreError {
+  protected constructor(message: string, cause: unknown | null) {
     super(message, cause);
   }
 }
