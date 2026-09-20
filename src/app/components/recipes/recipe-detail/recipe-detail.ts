@@ -5,6 +5,7 @@ import { NgOptimizedImage } from '@angular/common';
 import { AsyncState } from '../../shared/async-state/async-state';
 import { IRecipeRepository } from '../../../core/application/ports/repositories/recipe-repository';
 import { RECIPE_REPOSITORY } from '../../../infrastructure/di/repositories';
+import { ActivatedRoute } from '@angular/router';
 
 @Component({
   selector: 'app-recipe-detail',
@@ -19,22 +20,29 @@ export class RecipeDetail implements OnInit {
   public readonly recipe: WritableSignal<Recipe | null>; // Success
   public readonly isLoading: WritableSignal<boolean>;
   public readonly errorMessage: WritableSignal<string | null>;
+  private readonly route: ActivatedRoute;
 
-  constructor(@Inject(RECIPE_REPOSITORY) recipeRepository: IRecipeRepository) {
+  constructor(@Inject(RECIPE_REPOSITORY) recipeRepository: IRecipeRepository, route: ActivatedRoute) {
     this.recipeRepository = recipeRepository;
 
     // Use following variables with brackets within the component's html. Always use `()` in html -> recipe().
     this.recipe = signal<Recipe | null>(null); // null, since before loading there is no data
     this.isLoading = signal(false); // state is loading or not
     this.errorMessage = signal<string | null>(null); // error message or null
+    this.route = route;
   }
 
   public async ngOnInit(): Promise<void> {
+    const id = Number(this.route.snapshot.paramMap.get('id'));
+    if (isNaN(id)) {
+      this.errorMessage.set('Invalid category id');
+      return;
+    }
     this.isLoading.set(true);
     this.errorMessage.set(null);
 
     try {
-      const recipe = await this.recipeRepository.getById(52772);
+      const recipe = await this.recipeRepository.getById(id);
       this.recipe.set(recipe);
     } catch (e) {
       this.errorMessage.set(

@@ -211,6 +211,7 @@ display: -webkit-box;
 -webkit-line-clamp: 4;
 -webkit-box-orient: vertical;
 overflow: hidden;
+@media
 
 т.е. <ng-content> это любой контент, т.е child?
 почему делаем в import [], а не просто импортирием и используем в компоненте

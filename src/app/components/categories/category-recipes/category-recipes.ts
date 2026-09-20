@@ -4,7 +4,7 @@ import { Recipe } from '../../../core/domain/entities/recipe';
 import { ICategoryRepository } from '../../../core/application/ports/repositories/category-repository';
 import { IRecipeQueryService } from '../../../core/application/ports/query-services/recipe-query-service';
 import { CATEGORY_REPOSITORY, RECIPE_QUERY_SERVICE } from '../../../infrastructure/di/repositories';
-import { ActivatedRoute } from '@angular/router';
+import { ActivatedRoute, RouterLink } from '@angular/router';
 import { EntitiesNotLoadedError } from '../../../core/application/errors/entities-not-loaded-error';
 import { AsyncState } from '../../shared/async-state/async-state';
 import { NgOptimizedImage } from '@angular/common';
@@ -12,7 +12,7 @@ import { NgOptimizedImage } from '@angular/common';
 @Component({
   selector: 'app-category-recipes',
   standalone: true,
-  imports: [AsyncState, NgOptimizedImage],
+  imports: [AsyncState, NgOptimizedImage, RouterLink],
   templateUrl: './category-recipes.html',
   styleUrl: './category-recipes.scss',
 })

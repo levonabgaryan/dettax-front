@@ -1,19 +1,41 @@
 <app-async-state [isLoading]="isLoading()" [errorMessage]="errorMessage()">
   @if (recipe(); as r) {
-    <h1>{{ r.getName() }}</h1>
-    <p>{{ r.getDescription() }}</p>
+    <article class="recipe-detail">
+      <header class="recipe-detail__header">
+        <h1 class="recipe-detail__title">{{ r.getName() }}</h1>
 
-    @if (r.getImageUrl(); as imgUrl) {
-      <img [ngSrc]="imgUrl" [alt]="r.getName()" width="300" height="300" />
-    }
+        <div class="recipe-detail__meta">
+          <span class="recipe-detail__tag">{{ r.getCategory().getName() }}</span>
+          <span class="recipe-detail__tag">{{ r.getCountry() }}</span>
+        </div>
+      </header>
 
-    <h2>Ingredients</h2>
-    <ul>
-      @for (ing of r.getIngredients(); track ing) {
-        <li>{{ ing }}</li>
-      }
-    </ul>
+      <div class="recipe-detail__layout">
+        @if (r.getImageUrl(); as imgUrl) {
+          <img
+            [ngSrc]="imgUrl"
+            [alt]="r.getName()"
+            width="600"
+            height="600"
+            class="recipe-detail__image"
+          />
+        }
+
+        <div class="recipe-detail__info">
+          <p class="recipe-detail__description">{{ r.getDescription() }}</p>
+
+          <section class="recipe-detail__section">
+            <h2 class="recipe-detail__subtitle">Ingredients</h2>
+            <ul class="recipe-detail__ingredients">
+              @for (ing of r.getIngredients(); track ing) {
+                <li>{{ ing }}</li>
+              }
+            </ul>
+          </section>
+        </div>
+      </div>
+    </article>
   } @else {
-    <p>Recipe not found</p>
+    <p class="recipe-detail__empty">Recipe not found</p>
   }
 </app-async-state>
