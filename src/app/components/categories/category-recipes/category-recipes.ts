@@ -6,11 +6,13 @@ import { IRecipeQueryService } from '../../../core/application/ports/query-servi
 import { CATEGORY_REPOSITORY, RECIPE_QUERY_SERVICE } from '../../../infrastructure/di/repositories';
 import { ActivatedRoute } from '@angular/router';
 import { EntitiesNotLoadedError } from '../../../core/application/errors/entities-not-loaded-error';
+import { AsyncState } from '../../shared/async-state/async-state';
+import { NgOptimizedImage } from '@angular/common';
 
 @Component({
   selector: 'app-category-recipes',
   standalone: true,
-  imports: [],
+  imports: [AsyncState, NgOptimizedImage],
   templateUrl: './category-recipes.html',
   styleUrl: './category-recipes.scss',
 })
@@ -48,7 +50,7 @@ export class CategoryRecipes implements OnInit {
       const category = await this.categoryRepository.getById(id);
       this.category.set(category);
       if (category !== null) {
-        this.recipes.set(await this.recipeQueryService.getByCategoryName(category.getName()));
+        this.recipes.set(await this.recipeQueryService.findByCategoryName(category.getName()));
       }
     } catch (error) {
       this.errorMessage.set(

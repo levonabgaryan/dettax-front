@@ -15,7 +15,7 @@ export class HttpRecipeQueryService implements IRecipeQueryService {
     this.recipeRepository = recipeRepository;
   }
 
-  public async getByCategoryName(categoryName: string): Promise<Recipe[]> {
+  public async findByCategoryName(categoryName: string): Promise<Recipe[]> {
     let recipesByCategoryNameResponse: Response;
     try {
       recipesByCategoryNameResponse = await fetch(

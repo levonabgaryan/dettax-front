@@ -1,1 +1,41 @@
-<p>category-recipes works!</p>
+<app-async-state [isLoading]="isLoading()" [errorMessage]="errorMessage()">
+  @if (category(); as cat) {
+    @if (recipes().length > 0) {
+      <h1 class="page-title">Related recipes to {{ cat.getName() }}</h1>
+
+      <div class="container">
+        @for (recipe of recipes(); track recipe.getId()) {
+          <article class="recipe-card">
+            @if (recipe.getImageUrl(); as imgUrl) {
+              <img
+                [ngSrc]="imgUrl"
+                [alt]="recipe.getName()"
+                width="320"
+                height="200"
+                class="recipe-card__image"
+              />
+            }
+            <div class="recipe-card__body">
+              <h2 class="recipe-card__title">{{ recipe.getName() }}</h2>
+
+              <div class="recipe-card__meta-info">
+                <span>{{ recipe.getCountry() }}</span>
+                <span>{{ recipe.getCategory().getName() }}</span>
+              </div>
+
+              <p class="recipe-card__description">{{ recipe.getDescription() }}</p>
+
+              <h3 class="recipe-card__subtitle">Ingredients</h3>
+              <ul class="recipe-card__ingredients">
+                @for (ingredient of recipe.getIngredients(); track ingredient) {
+                  <li>{{ ingredient }}</li>
+                }
+              </ul>
+            </div>
+            <a href="#" class="detailed-btn">Detailed</a>
+          </article>
+        }
+      </div>
+    }
+  }
+</app-async-state>

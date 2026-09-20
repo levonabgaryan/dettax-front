@@ -39,7 +39,7 @@ export class Recipe extends Entity {
     return this.description;
   }
 
-  public getArea(): string {
+  public getCountry(): string {
     return this.area;
   }
 
