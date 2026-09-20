@@ -1,0 +1,45 @@
+.category-detail {
+  max-width: 60rem;
+  margin: 3rem auto;
+  padding: 2rem;
+  background: #fff;
+  border-radius: 1rem;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+  overflow: hidden;
+
+  &__image {
+    display: block;
+    width: 100%;
+    max-width: 20rem;
+    height: auto;
+    margin: 0 auto 1.5rem;
+    object-fit: contain;
+  }
+
+  &__body {
+    text-align: center;
+  }
+
+  &__title {
+    margin: 0 0 1rem;
+    font-size: 2rem;
+    font-weight: 700;
+    color: #2c2b2b;
+  }
+
+  &__description {
+    margin: 0;
+    font-size: 1rem;
+    line-height: 1.6;
+    color: #555;
+    max-width: 45rem;
+    margin-inline: auto;
+  }
+
+  &__empty {
+    text-align: center;
+    font-size: 1.25rem;
+    color: #999;
+    margin: 3rem;
+  }
+}

@@ -1,8 +1,4 @@
-@if (isLoading()) {
-  <p>Loading ...</p>
-} @else if (errorMessage()) {
-  <p style="color: red">{{ errorMessage() }}</p>
-} @else {
+<app-async-state [isLoading]="isLoading()" [errorMessage]="errorMessage()">
   @if (recipe(); as r) {
     <h1>{{ r.getName() }}</h1>
     <p>{{ r.getDescription() }}</p>
@@ -20,4 +16,4 @@
   } @else {
     <p>Recipe not found</p>
   }
-}
+</app-async-state>

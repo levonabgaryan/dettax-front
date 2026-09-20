@@ -1,25 +1,27 @@
-import { Component, OnInit, signal, WritableSignal } from '@angular/core';
-import { RecipeCRUDService } from '../../../core/application/crud-services/recipe-crud-service';
+import { Component, Inject, OnInit, signal, WritableSignal } from '@angular/core';
 import { Recipe } from '../../../core/domain/entities/recipe';
 import { EntityNotLoadedError } from '../../../core/application/errors/entity-not-loaded-error';
 import { NgOptimizedImage } from '@angular/common';
+import { AsyncState } from '../../shared/async-state/async-state';
+import { IRecipeRepository } from '../../../core/application/ports/repositories/recipe-repository';
+import { RECIPE_REPOSITORY } from '../../../infrastructure/di/repositories';
 
 @Component({
   selector: 'app-recipe-detail',
   standalone: true,
-  imports: [NgOptimizedImage],
+  imports: [NgOptimizedImage, AsyncState],
   templateUrl: './recipe-detail.html',
   styleUrl: './recipe-detail.scss',
 })
 export class RecipeDetail implements OnInit {
-  private readonly recipeCRUDService: RecipeCRUDService;
+  private recipeRepository: IRecipeRepository;
 
   public readonly recipe: WritableSignal<Recipe | null>; // Success
   public readonly isLoading: WritableSignal<boolean>;
   public readonly errorMessage: WritableSignal<string | null>;
 
-  constructor(recipeCRUDService: RecipeCRUDService) {
-    this.recipeCRUDService = recipeCRUDService;
+  constructor(@Inject(RECIPE_REPOSITORY) recipeRepository: IRecipeRepository) {
+    this.recipeRepository = recipeRepository;
 
     // Use following variables with brackets within the component's html. Always use `()` in html -> recipe().
     this.recipe = signal<Recipe | null>(null); // null, since before loading there is no data
@@ -32,7 +34,7 @@ export class RecipeDetail implements OnInit {
     this.errorMessage.set(null);
 
     try {
-      const recipe = await this.recipeCRUDService.getById(52772);
+      const recipe = await this.recipeRepository.getById(52772);
       this.recipe.set(recipe);
     } catch (e) {
       this.errorMessage.set(

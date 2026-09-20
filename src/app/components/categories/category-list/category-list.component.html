@@ -1,0 +1,25 @@
+<app-async-state [isLoading]="isLoading()" [errorMessage]="errorMessage()">
+  <section class="home">
+    <h1>Find your preferred recipe by category</h1>
+
+    <div class="categories-list">
+      @for (categoryCard of allCategories(); track categoryCard.getId()) {
+        <section class="category-card">
+          @if (categoryCard.getImgUrl(); as imgUrl) {
+            <img [ngSrc]="imgUrl" [alt]="categoryCard.getName()" width="320" height="200" />
+
+            <div class="category-card__content">
+              <h2 class="category-name">{{ categoryCard.getName() }}</h2>
+              <p class="category-description">{{ categoryCard.getDescription() }}</p>
+
+              <a [routerLink]="['/category', categoryCard.getId()]" class="more-btn"> More </a>
+              <a [routerLink]="['/category', categoryCard.getId(), 'recipes']" class="related-recipes-btn">
+                Related Recipes
+              </a>
+            </div>
+          }
+        </section>
+      }
+    </div>
+  </section>
+</app-async-state>

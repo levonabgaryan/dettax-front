@@ -5,7 +5,7 @@ export const RecipeSchema = z.object({
   idMeal: z.coerce.number().int().positive(),
   strMeal: z.string().min(1), // name
   strCategory: z.string().min(1),
-  strArea: z.string().min(2), // country name
+  strCountry: z.string().min(2),
   strInstructions: z.string().min(3), // description
 
   // The recipe is supposed to at least contain one ingredient with its measurement
@@ -67,18 +67,19 @@ export const RecipeResponseContentSchema = z.object({
   meals: z.array(RecipeSchema).nullable(),
 });
 
-export const CategoryValueObjectSchema = z.object({
-  idCategory: z.string(),
+export const CategorySchema = z.object({
+  idCategory: z.coerce.number().int().positive(),
   strCategory: z.string(),
   strCategoryThumb: z.url(),
   strCategoryDescription: z.string(),
 });
 
 export const AllCategoriesSchema = z.object({
-  categories: z.array(CategoryValueObjectSchema),
+  categories: z.array(CategorySchema),
 });
 
 export type RecipeSchemaType = z.infer<typeof RecipeSchema>;
 export type RecipeResponseContentType = z.infer<typeof RecipeResponseContentSchema>;
 
-export type CategoryValueObjectSchemaType = z.infer<typeof CategoryValueObjectSchema>;
+export type CategorySchemaType = z.infer<typeof CategorySchema>;
+export type AllCategoriesSchemaType = z.infer<typeof AllCategoriesSchema>;

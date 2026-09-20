@@ -5,12 +5,13 @@ import { HttpError } from '../../../../errors/http-error';
 import { Injectable } from '@angular/core';
 import {
   AllCategoriesSchema,
-  CategoryValueObjectSchemaType,
+  AllCategoriesSchemaType,
+  CategorySchemaType,
   RecipeResponseContentSchema,
   RecipeSchemaType,
 } from './response-schemas';
-import { CategoryValueObject } from '../../../../../core/domain/value-objects/category-value-object';
-import { CategoryValueObjectsAreNotLoadedError } from '../../../../../core/application/errors/category-value-objects-are-not-loaded-error';
+import { CategoriesAreNotLoadedError } from '../../../../../core/application/errors/categories-are-not-loaded-error';
+import { Category } from '../../../../../core/domain/entities/category';
 
 @Injectable()
 export class HttpRecipeRepository implements IRecipeRepository {
@@ -20,75 +21,69 @@ export class HttpRecipeRepository implements IRecipeRepository {
   private static readonly getAllCategoriesUrl = `${HttpRecipeRepository.apiBaseUrl}categories.php`;
 
   public async getById(id: number): Promise<Recipe | null> {
+    // Since the public API is a bit mixed up, we have to combine some apis responses to have clean Entities.
     const url = `${HttpRecipeRepository.getByIdUrl}${id}`;
 
-    let response: Response;
+    let recipeResponse: Response;
     try {
-      response = await fetch(url);
+      recipeResponse = await fetch(url);
     } catch (cause) {
       throw new EntityNotLoadedError('Recipe', id, cause);
     }
 
-    if (!response.ok) {
-      throw new EntityNotLoadedError('Recipe', id, new HttpError(response.status));
+    if (!recipeResponse.ok) {
+      throw new EntityNotLoadedError('Recipe', id, new HttpError(recipeResponse.status));
+    }
+    const parsedRecipeContent = RecipeResponseContentSchema.safeParse(await recipeResponse.json());
+    if (!parsedRecipeContent.success) {
+      throw new EntityNotLoadedError('Recipe', id, parsedRecipeContent.error);
     }
 
-    let body: unknown;
-    try {
-      body = await response.json();
-    } catch (cause) {
-      throw new EntityNotLoadedError('Recipe', id, cause);
-    }
-
-    const parsed = RecipeResponseContentSchema.safeParse(body);
-    if (!parsed.success) {
-      throw new EntityNotLoadedError('Recipe', id, parsed.error);
-    }
-
-    if (!parsed.data.meals?.length) {
+    if (!parsedRecipeContent.data.meals?.length) {
       return null;
     }
 
-    return this.toEntity(parsed.data.meals[0]);
-  }
-
-  public async getAllCategoryValueObjects(): Promise<CategoryValueObject[]> {
-    let response: Response;
+    let allCategoriesResponse: Response;
 
     try {
-      response = await fetch(HttpRecipeRepository.getAllCategoriesUrl);
+      allCategoriesResponse = await fetch(HttpRecipeRepository.getAllCategoriesUrl);
     } catch (cause) {
-      throw new CategoryValueObjectsAreNotLoadedError(cause);
+      throw new CategoriesAreNotLoadedError(cause);
     }
-    if (!response.ok) {
-      throw new CategoryValueObjectsAreNotLoadedError(new HttpError(response.status));
+    if (!allCategoriesResponse.ok) {
+      throw new CategoriesAreNotLoadedError(new HttpError(allCategoriesResponse.status));
     }
 
-    const parsed = AllCategoriesSchema.safeParse(await response.json());
-    if (!parsed.success) {
-      throw new CategoryValueObjectsAreNotLoadedError(parsed.error);
-    }
-    return parsed.data.categories.map((c) => this.toCategoryValueObject(c));
-  }
-
-  private toCategoryValueObject(
-    categoryValueObjectSchema: CategoryValueObjectSchemaType,
-  ): CategoryValueObject {
-    return new CategoryValueObject(
-      categoryValueObjectSchema.strCategory,
-      categoryValueObjectSchema.strCategoryThumb,
-      categoryValueObjectSchema.strCategoryDescription,
+    const allParsedCategoriesContent = AllCategoriesSchema.safeParse(
+      await allCategoriesResponse.json(),
     );
+    if (!allParsedCategoriesContent.success) {
+      throw new CategoriesAreNotLoadedError(allParsedCategoriesContent.error);
+    }
+
+    return this.toEntity(parsedRecipeContent.data.meals[0], allParsedCategoriesContent.data);
   }
 
-  private toEntity(recipeSchema: RecipeSchemaType): Recipe {
+  private toEntity(
+    recipeSchema: RecipeSchemaType,
+    allCategoriesSchema: AllCategoriesSchemaType,
+  ): Recipe {
     const ingredientWithMeasurementSet = this.buildIngredientWithMeasurementSet(recipeSchema);
-    const categoryValueObject = new CategoryValueObject(recipeSchema.strCategory);
+    const categorySchema = this.findNeededCategory(recipeSchema.strCategory, allCategoriesSchema);
+    if (categorySchema === null) {
+      throw new EntityNotLoadedError('Recipe', recipeSchema.idMeal);
+    }
+    const category = new Category(
+      categorySchema.idCategory,
+      categorySchema.strCategory,
+      categorySchema.strCategoryDescription,
+      categorySchema.strCategoryThumb,
+    );
     return new Recipe(
       recipeSchema.idMeal,
       recipeSchema.strMeal,
-      recipeSchema.strArea,
-      categoryValueObject,
+      recipeSchema.strCountry,
+      category,
       recipeSchema.strInstructions,
       ingredientWithMeasurementSet,
       recipeSchema.strMealThumb,
@@ -114,5 +109,16 @@ export class HttpRecipeRepository implements IRecipeRepository {
       ingredientWithMeasurementSet.add(`${ingredient} ${measurement}`);
     }
     return ingredientWithMeasurementSet;
+  }
+
+  private findNeededCategory(
+    categoryName: string,
+    allCategoriesSchema: AllCategoriesSchemaType,
+  ): CategorySchemaType | null {
+    const found = allCategoriesSchema.categories.find((c) => c.strCategory === categoryName);
+    if (!found) {
+      return null;
+    }
+    return found;
   }
 }

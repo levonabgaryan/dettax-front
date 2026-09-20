@@ -1,0 +1,7 @@
+@if (isLoading()) {
+  <p class="async-state__loading">Loading ...</p>
+} @else if (errorMessage()) {
+  <p class="async-state__error">{{ errorMessage() }}</p>
+} @else {
+  <ng-content></ng-content>
+}

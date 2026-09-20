@@ -108,10 +108,10 @@ There are 9 of them
 Every component stage -> CREATE, UPDATE, DELETE
 1) CREATE
    . constructor - When DI services is being provided to component constructor
-   . ngOnChanges - When parent passes a value into a child(current component)
+   . ngOnChanges - When a parent passes a value into a child(current component)
    . ngOnInit - When we need to provide data dor the component.
-   . ngAfterViewInit - When view(current html template) is drawn
-   . ngAfterContentInit - no need (when parent gives a html component into the child)
+   . ngAfterViewInit - After when view(current html template) is drawn
+   . ngAfterContentInit - no need (after when parent gives a html component into the child)
 
 2) UPDATE
    . ngDoCheck - no need
@@ -211,3 +211,21 @@ display: -webkit-box;
 -webkit-line-clamp: 4;
 -webkit-box-orient: vertical;
 overflow: hidden;
+
+т.е. <ng-content> это любой контент, т.е child?
+почему делаем в import [], а не просто импортирием и используем в компоненте
+
+Into imports are written:
+. child components
+. directives (RouterLink, ngSrc, etc.)
+. pipes (<div [innerHTML]="description | sanitizeHtml"></div>)
+
+And in parent component it is supposed to be written like this way.
+```
+<app-async-state
+  [isLoading]="isLoading()" <-
+  [errorMessage]="errorMessage()" <-
+>
+  <h1>...</h1>
+</app-async-state>
+```
