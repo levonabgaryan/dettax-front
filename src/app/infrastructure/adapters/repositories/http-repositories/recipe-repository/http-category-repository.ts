@@ -5,7 +5,7 @@ import { HttpError } from '../../../../errors/http-error';
 import { AllCategoriesSchema, CategorySchemaType } from './response-schemas';
 
 export class HttpCategoryRepository implements ICategoryRepository {
-  private static readonly apiBaseUrl = 'https://www.themealdb.com/api/json/v1/1/';
+  private static readonly apiBaseUrl = '/api/json/v1/1/';
   private static readonly getAllCategoriesUrl = `${HttpCategoryRepository.apiBaseUrl}categories.php`;
 
   public async getAll(): Promise<Category[]> {

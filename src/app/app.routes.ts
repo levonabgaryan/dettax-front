@@ -11,4 +11,5 @@ export const routes: Routes = [
   { path: 'category/:id/recipes', component: CategoryRecipes },
   { path: '', redirectTo: '/home', pathMatch: 'full' },
   { path: 'home', redirectTo: '/categories' },
+  { path: '**', redirectTo: '/home' },
 ];

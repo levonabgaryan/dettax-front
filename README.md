@@ -27,12 +27,6 @@ npm -v
 ng version
 ```
 
-If you do not have Angular CLI, install it:
-
-```bash
-npm install -g @angular/cli
-```
-
 ## How to run the project locally
 
 1. Install dependencies:

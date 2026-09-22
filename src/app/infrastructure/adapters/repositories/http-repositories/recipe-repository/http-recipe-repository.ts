@@ -15,7 +15,7 @@ import { Category } from '../../../../../core/domain/entities/category';
 
 @Injectable()
 export class HttpRecipeRepository implements IRecipeRepository {
-  private static readonly apiBaseUrl = 'https://www.themealdb.com/api/json/v1/1/';
+  private static readonly apiBaseUrl = '/api/json/v1/1/';
 
   private static readonly getByIdUrl = `${HttpRecipeRepository.apiBaseUrl}lookup.php?i=`;
   private static readonly getAllCategoriesUrl = `${HttpRecipeRepository.apiBaseUrl}categories.php`;

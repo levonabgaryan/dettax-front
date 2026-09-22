@@ -6,8 +6,8 @@ import { IRecipeRepository } from '../../../core/application/ports/repositories/
 import { RecipesByCategoryNameSchema } from './response-schamas';
 
 export class HttpRecipeQueryService implements IRecipeQueryService {
-  private static readonly apiBaseUrl = 'https://www.themealdb.com/api/json/v1/1/';
-  private static readonly getByCategoryNameUrl = `${HttpRecipeQueryService.apiBaseUrl}/filter.php?c=`;
+  private static readonly apiBaseUrl = '/api/json/v1/1/';
+  private static readonly getByCategoryNameUrl = `${HttpRecipeQueryService.apiBaseUrl}filter.php?c=`;
 
   private readonly recipeRepository: IRecipeRepository;
 
