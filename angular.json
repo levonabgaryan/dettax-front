@@ -7,7 +7,7 @@
   },
   "newProjectRoot": "projects",
   "projects": {
-    "recipe-store": {
+    "dettax-front": {
       "projectType": "application",
       "schematics": {
         "@schematics/angular:component": {
@@ -60,10 +60,10 @@
           "builder": "@angular/build:dev-server",
           "configurations": {
             "production": {
-              "buildTarget": "recipe-store:build:production"
+              "buildTarget": "dettax-front:build:production"
             },
             "development": {
-              "buildTarget": "recipe-store:build:development"
+              "buildTarget": "dettax-front:build:development"
             }
           },
           "defaultConfiguration": "development"

@@ -1,59 +1,60 @@
-# RecipeStore
+# DettaxFront
 
-This project was generated using [Angular CLI](https://github.com/angular/angular-cli) version 21.2.24.
+A small Angular project for a recipe website.  
+The project uses some ideas from hexagonal architecture and Domain-Driven Design (DDD).  
+The goal is to make the front end easier to maintain and read.  
+Please note that some links might not be implemented yet.
 
-## Development server
+Data comes from [TheMealDB](https://www.themealdb.com/).  
+TheMealDB API is not always easy to use or well-structured.  
+So in some parts of the code, the data is transformed in order to fit our domain.
 
-To start a local development server, run:
+## Requirements
+
+Before you start, make sure you have:
+
+- **Node.js**: `22.12.0` or higher (LTS version is recommended)
+- **npm**: `12.0.2`  
+  You can install it with: `npm install -g npm@12.0.2`  
+  Or use Corepack: `corepack enable`
+- **Angular CLI**: You can install it globally with `npm install -g @angular/cli`
+
+You can check them with:
+
+```bash
+node -v
+npm -v
+ng version
+```
+
+If you do not have Angular CLI, install it:
+
+```bash
+npm install -g @angular/cli
+```
+
+## How to run the project locally
+
+1. Install dependencies:
+
+```bash
+npm install
+```
+
+2. Start the development server:
 
 ```bash
 ng serve
 ```
 
-Once the server is running, open your browser and navigate to `http://localhost:4200/`. The application will automatically reload whenever you modify any of the source files.
+3. Open your browser and go to:
 
-## Code scaffolding
-
-Angular CLI includes powerful code scaffolding tools. To generate a new component, run:
-
-```bash
-ng generate component component-name
+```text
+http://localhost:4200/
 ```
 
-For a complete list of available schematics (such as `components`, `directives`, or `pipes`), run:
+If port `4200` is busy, you can use another port:
 
 ```bash
-ng generate --help
+ng serve --port 4300
 ```
-
-## Building
-
-To build the project run:
-
-```bash
-ng build
-```
-
-This will compile your project and store the build artifacts in the `dist/` directory. By default, the production build optimizes your application for performance and speed.
-
-## Running unit tests
-
-To execute unit tests with the [Vitest](https://vitest.dev/) test runner, use the following command:
-
-```bash
-ng test
-```
-
-## Running end-to-end tests
-
-For end-to-end (e2e) testing, run:
-
-```bash
-ng e2e
-```
-
-Angular CLI does not come with an end-to-end testing framework by default. You can choose one that suits your needs.
-
-## Additional Resources
-
-For more information on using the Angular CLI, including detailed command references, visit the [Angular CLI Overview and Command Reference](https://angular.dev/tools/cli) page.

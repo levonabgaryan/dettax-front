@@ -12,5 +12,5 @@ import { Hero } from './components/shared/hero/hero';
   styleUrl: './app.scss',
 })
 export class App {
-  protected readonly title = signal('recipe-store');
+  protected readonly title = signal('dettax-front');
 }

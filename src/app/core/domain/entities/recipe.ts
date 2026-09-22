@@ -5,7 +5,7 @@ export class Recipe extends Entity {
   private readonly name: string;
   private readonly category: Category;
   private readonly description: string;
-  private readonly area: string; // The name of the country
+  private readonly country: string; // The name of the country
   private readonly imgUrl: string | null = null;
   private readonly ingredients: Set<string>;
 
@@ -20,7 +20,7 @@ export class Recipe extends Entity {
   ) {
     super(id);
     this.name = name;
-    this.area = area;
+    this.country = area;
     this.category = category;
     this.description = description;
     this.ingredients = ingredients;
@@ -40,7 +40,7 @@ export class Recipe extends Entity {
   }
 
   public getCountry(): string {
-    return this.area;
+    return this.country;
   }
 
   public getImageUrl(): string | null {
