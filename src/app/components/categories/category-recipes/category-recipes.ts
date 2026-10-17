@@ -3,11 +3,12 @@ import { Category } from '../../../core/domain/entities/category';
 import { Recipe } from '../../../core/domain/entities/recipe';
 import { ICategoryRepository } from '../../../core/application/ports/repositories/category-repository';
 import { IRecipeQueryService } from '../../../core/application/ports/query-services/recipe-query-service';
-import { CATEGORY_REPOSITORY, RECIPE_QUERY_SERVICE } from '../../../infrastructure/di/repositories';
+import { CATEGORY_REPOSITORY } from '../../../infrastructure/di/repositories';
 import { ActivatedRoute, RouterLink } from '@angular/router';
 import { EntitiesNotLoadedError } from '../../../core/application/errors/entities-not-loaded-error';
 import { AsyncState } from '../../shared/async-state/async-state';
 import { NgOptimizedImage } from '@angular/common';
+import { RECIPE_QUERY_SERVICE } from '../../../infrastructure/di/query-services';
 
 @Component({
   selector: 'app-category-recipes',
@@ -50,7 +51,7 @@ export class CategoryRecipes implements OnInit {
       const category = await this.categoryRepository.getById(id);
       this.category.set(category);
       if (category !== null) {
-        this.recipes.set(await this.recipeQueryService.findByCategoryName(category.getName()));
+        this.recipes.set(await this.recipeQueryService.findByCategoryId(category.getName()));
       }
     } catch (error) {
       this.errorMessage.set(

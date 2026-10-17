@@ -1,5 +1,10 @@
 import { Recipe } from '../../../domain/entities/recipe';
+import { Category } from '../../../domain/entities/category';
 
 export interface IRecipeQueryService {
-  findByCategoryName(categoryName: string): Promise<Recipe[]>;
+  getAllByCategoryPaged(
+    category: Category,
+    pageSize: number,
+    pageNumber: number,
+  ): Promise<Recipe[]>;
 }

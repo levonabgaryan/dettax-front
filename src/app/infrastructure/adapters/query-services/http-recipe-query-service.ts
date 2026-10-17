@@ -1,55 +1,136 @@
+import { HttpClient, HttpHeaders, HttpParams } from '@angular/common/http';
+import { firstValueFrom } from 'rxjs';
 import { IRecipeQueryService } from '../../../core/application/ports/query-services/recipe-query-service';
+import { Category } from '../../../core/domain/entities/category';
 import { Recipe } from '../../../core/domain/entities/recipe';
-import { EntitiesNotLoadedError } from '../../../core/application/errors/entities-not-loaded-error';
-import { HttpError } from '../../errors/http-error';
-import { IRecipeRepository } from '../../../core/application/ports/repositories/recipe-repository';
-import { RecipesByCategoryNameSchema } from './response-schamas';
+import { Author } from '../../../core/domain/entities/author';
+import { Ingredient } from '../../../core/domain/value-objects/ingredient';
+import Jsona from 'jsona';
 
 export class HttpRecipeQueryService implements IRecipeQueryService {
-  private static readonly apiBaseUrl = '/api/json/v1/1/';
-  private static readonly getByCategoryNameUrl = `${HttpRecipeQueryService.apiBaseUrl}filter.php?c=`;
+  private static readonly baseUrl = 'http://localhost:5247/categories';
+  private static readonly headers = new HttpHeaders({ Accept: 'application/vnd.api+json' });
 
-  private readonly recipeRepository: IRecipeRepository;
+  private readonly httpClient: HttpClient;
+  private readonly jsona: Jsona;
 
-  constructor(recipeRepository: IRecipeRepository) {
-    this.recipeRepository = recipeRepository;
+  constructor(httpClient: HttpClient) {
+    this.httpClient = httpClient;
+    this.jsona = new Jsona();
   }
 
-  public async findByCategoryName(categoryName: string): Promise<Recipe[]> {
-    let recipesByCategoryNameResponse: Response;
-    try {
-      recipesByCategoryNameResponse = await fetch(
-        `${HttpRecipeQueryService.getByCategoryNameUrl}${categoryName}`,
-      );
-    } catch (cause) {
-      throw new EntitiesNotLoadedError('Recipe', cause);
-    }
-    if (!recipesByCategoryNameResponse.ok) {
-      throw new EntitiesNotLoadedError(
-        'Recipe',
-        new HttpError(recipesByCategoryNameResponse.status),
-      );
-    }
-    const parsedRecipesByCategoryNameContent = RecipesByCategoryNameSchema.safeParse(
-      await recipesByCategoryNameResponse.json(),
+  public async getAllByCategoryPaged(
+    category: Category,
+    pageSize: number,
+    pageNumber: number,
+  ): Promise<Recipe[]> {
+    const categoryId = category.getId();
+
+    let params = new HttpParams();
+    params = params.append('page[number]', pageNumber.toString());
+    params = params.append('page[size]', pageSize.toString());
+    params = params.append('include', 'author,categories');
+
+    const url = `${HttpRecipeQueryService.baseUrl}/${categoryId}/recipes`;
+
+    const rawResponse = await firstValueFrom(
+      this.httpClient.get<Record<string, unknown>>(url, {
+        headers: HttpRecipeQueryService.headers,
+        params: params,
+      }),
     );
-    if (!parsedRecipesByCategoryNameContent.success) {
-      throw new EntitiesNotLoadedError('Recipe', parsedRecipesByCategoryNameContent.error);
-    }
-    if (parsedRecipesByCategoryNameContent.data.meals === null) {
-      return [];
-    }
-    const results = await Promise.allSettled(
-      parsedRecipesByCategoryNameContent.data.meals.map((meal) =>
-        this.recipeRepository.getById(meal.idMeal),
-      ),
-    );
-    const recipes: Recipe[] = [];
-    for (const result of results) {
-      if (result.status === 'fulfilled' && result.value !== null) {
-        recipes.push(result.value);
+
+    const deserialized = this.jsona.deserialize(rawResponse) as
+      DeserializedRecipe[] | { collection: DeserializedRecipe[] };
+
+    const items: DeserializedRecipe[] = Array.isArray(deserialized)
+      ? deserialized
+      : deserialized.collection || [];
+
+    return items.map((item) => this.mapToDomain(item));
+  }
+
+  private mapToDomain(item: DeserializedRecipe): Recipe {
+    const author = item.author
+      ? new Author(
+          item.author.id,
+          item.author.firstName,
+          item.author.lastName,
+          item.author.email,
+          new Set(),
+          new Date(item.author.createdAt || Date.now()),
+          new Date(item.author.updatedAt || Date.now()),
+        )
+      : null;
+
+    const categories = new Set<Category>();
+    if (item.categories && Array.isArray(item.categories)) {
+      for (const cat of item.categories) {
+        categories.add(
+          new Category(
+            cat.id,
+            cat.title,
+            cat.description,
+            cat.imgUrl,
+            new Date(cat.createdAt),
+            new Date(cat.updatedAt),
+          ),
+        );
       }
     }
-    return recipes;
+
+    const ingredients = (item.ingredients || []).map(
+      (i) => new Ingredient(i.name, i.amount, i.unit),
+    );
+
+    return new Recipe(
+      item.id,
+      item.title,
+      item.country,
+      categories,
+      author,
+      item.description,
+      ingredients,
+      item.imageUrl,
+      new Date(item.createdAt),
+      new Date(item.updatedAt),
+    );
   }
+}
+
+interface IngredientJson {
+  name: string;
+  amount: number;
+  unit: string;
+}
+
+interface AuthorJson {
+  id: string;
+  firstName: string;
+  lastName: string;
+  email: string;
+  createdAt?: string;
+  updatedAt?: string;
+}
+
+interface CategoryJson {
+  id: string;
+  title: string;
+  description: string | null;
+  imgUrl: string | null;
+  createdAt: string;
+  updatedAt: string;
+}
+
+interface DeserializedRecipe {
+  id: string;
+  title: string;
+  country: string;
+  description: string | null;
+  imageUrl: string | null;
+  ingredients: IngredientJson[];
+  createdAt: string;
+  updatedAt: string;
+  author?: AuthorJson | null;
+  categories?: CategoryJson[];
 }
