@@ -1,8 +1,17 @@
 import { Recipe } from '../../../domain/entities/recipe';
-/**
- * This class is just supposed to have CRUD methods, complex searching things is supposed to implement
- * into query-services
- */
+import { Ingredient } from '../../../domain/value-objects/ingredient';
+
 export interface IRecipeRepository {
-  getById(id: number): Promise<Recipe | null>;
+  create(dto: CreateRecipeDTO): Promise<Recipe>;
+  update(updatedRecipe: Recipe): Promise<Recipe>;
+}
+
+export interface CreateRecipeDTO {
+  name: string;
+  country: string;
+  description?: string;
+  imageUrl?: string;
+  ingredients: Ingredient[];
+  authorId: string;
+  categoriesIds: Set<string>;
 }

@@ -1,19 +1,20 @@
 import { InvalidIdError } from '../errors/invalid-id';
-export class IdValueObject {
-  private readonly value: number;
 
-  constructor(id: number) {
-    this.validateGreaterThanZero(id);
+export class IdValueObject {
+  private readonly value: string;
+
+  constructor(id: string) {
+    this.validateNotEmpty(id);
     this.value = id;
   }
 
-  private validateGreaterThanZero(value: number): void {
-    if (isNaN(value) || value <= 0) {
+  private validateNotEmpty(value: string): void {
+    if (!value || value.trim().length === 0) {
       throw new InvalidIdError(value);
     }
   }
 
-  public getValue(): number {
+  public getValue(): string {
     return this.value;
   }
 

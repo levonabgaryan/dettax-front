@@ -52,3 +52,5 @@ If port `4200` is busy, you can use another port:
 ```bash
 ng serve --port 4300
 ```
+
+# Currently, the project is on changes, so you can't run it.

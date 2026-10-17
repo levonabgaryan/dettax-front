@@ -22,7 +22,10 @@ export class RecipeDetail implements OnInit {
   public readonly errorMessage: WritableSignal<string | null>;
   private readonly route: ActivatedRoute;
 
-  constructor(@Inject(RECIPE_REPOSITORY) recipeRepository: IRecipeRepository, route: ActivatedRoute) {
+  constructor(
+    @Inject(RECIPE_REPOSITORY) recipeRepository: IRecipeRepository,
+    route: ActivatedRoute,
+  ) {
     this.recipeRepository = recipeRepository;
 
     // Use following variables with brackets within the component's html. Always use `()` in html -> recipe().

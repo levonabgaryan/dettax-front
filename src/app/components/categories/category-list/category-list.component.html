@@ -13,7 +13,10 @@
               <p class="category-description">{{ categoryCard.getDescription() }}</p>
 
               <a [routerLink]="['/category', categoryCard.getId()]" class="more-btn"> More </a>
-              <a [routerLink]="['/category', categoryCard.getId(), 'recipes']" class="related-recipes-btn">
+              <a
+                [routerLink]="['/category', categoryCard.getId(), 'recipes']"
+                class="related-recipes-btn"
+              >
                 Related Recipes
               </a>
             </div>

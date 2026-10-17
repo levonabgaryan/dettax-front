@@ -1,32 +1,49 @@
-import { Entity } from './entity';
+import { EntityBase } from './entityBase';
 
-export class Category extends Entity {
+export class Category extends EntityBase {
   private name: string;
-  private description: string;
-  private imgUrl: string;
+  private description: string | null;
+  private imgUrl: string | null;
 
-  constructor(id: number, name: string, description: string, imgUrl: string) {
-    super(id);
+  constructor(
+    id: string,
+    name: string,
+    description: string | null,
+    imgUrl: string | null,
+    createdAt: Date,
+    updatedAt: Date,
+  ) {
+    super(id, createdAt, updatedAt);
     this.name = name;
     this.description = description;
     this.imgUrl = imgUrl;
   }
+
   public getName(): string {
     return this.name;
   }
-  public setName(name: string): void {
-    this.name = name;
+
+  public setName(newName: string): void {
+    this.name = newName;
   }
-  public getDescription(): string {
+
+  public getDescription(): string | null {
     return this.description;
   }
-  public setDescription(description: string): void {
-    this.description = description;
+
+  public appendToDescription(text: string): void {
+    if (this.description) {
+      this.description = `${this.description} ${text}`;
+    } else {
+      this.description = text;
+    }
   }
-  public getImgUrl(): string {
+
+  public getImgUrl(): string | null {
     return this.imgUrl;
   }
-  public setImgUrl(imgUrl: string): void {
-    this.imgUrl = imgUrl;
+
+  public setImgUrl(newImgUrl: string | null): void {
+    this.imgUrl = newImgUrl;
   }
 }
