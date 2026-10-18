@@ -1,89 +1,88 @@
-.page-title {
-  text-align: center;
-  font-size: 2rem;
-  font-weight: 700;
-  color: #2c2b2b;
-  margin-bottom: 2rem;
-  margin-top: 5rem;
-}
-
-.container {
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
-  gap: 1.5rem;
-  padding: 0 2rem;
+.page-container {
   max-width: 1400px;
   margin: 0 auto;
+  padding: 2rem;
+}
+
+.page-title {
+  text-align: center;
+  font-size: 2.5rem;
+  font-weight: 700;
+  color: #2c2b2b;
+  margin-top: 3rem;
+  margin-bottom: 3rem;
+}
+
+.recipes-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(340px, 1fr));
+  gap: 2rem;
 }
 
 .recipe-card {
   display: flex;
   flex-direction: column;
+  background: #fff;
   border: 1px solid #e0e0e0;
-  border-radius: 8px;
+  border-radius: 12px;
   overflow: hidden;
-  position: relative;
-  background-color: #fff;
-
-  transition: transform 0.2s ease-in-out, box-shadow 0.2s ease-in-out;
+  transition: transform 0.2s, box-shadow 0.2s;
 
   &:hover {
-    transform: translateY(-4px);
+    transform: translateY(-5px);
     box-shadow: 0 12px 24px rgba(0, 0, 0, 0.1);
   }
 
   &__image {
     width: 100%;
-    height: 12rem;
+    height: 220px;
     object-fit: cover;
-    display: block;
   }
 
   &__body {
-    padding: 1.25rem;
-    padding-bottom: 3rem;
+    padding: 1.5rem;
     display: flex;
     flex-direction: column;
     flex-grow: 1;
   }
 
   &__title {
-    margin: 0 0 0.5rem 0;
-    font-size: 1.25rem;
+    font-size: 1.4rem;
     color: #2c2b2b;
+    margin: 0 0 1rem 0;
   }
 
-  &__meta-info {
-    margin-bottom: 1rem;
+  &__meta {
     display: flex;
     flex-wrap: wrap;
-    align-items: center;
     gap: 0.5rem;
-    font-size: 0.9rem;
-    color: #666;
+    margin-bottom: 1rem;
 
-    span:first-child {
+    .country-tag {
+      background: #e6f4ea;
+      color: #1e8e3e;
+      padding: 0.2rem 0.6rem;
+      border-radius: 12px;
+      font-size: 0.75rem;
       font-weight: 600;
-      color: #333;
+      text-transform: uppercase;
+    }
+
+    .category-tag {
+      background: #f0f0f0;
+      color: #555;
+      padding: 0.2rem 0.6rem;
+      border-radius: 12px;
+      font-size: 0.75rem;
+      text-transform: uppercase;
     }
   }
 
-  .category-tag {
-    background-color: #f0f0f0;
-    padding: 0.2rem 0.6rem;
-    border-radius: 12px;
-    font-size: 0.75rem;
-    color: #555;
-    text-transform: uppercase;
-    letter-spacing: 0.5px;
-  }
-
   &__description {
-    margin: 0 0 1rem 0;
-    font-size: 0.9rem;
-    line-height: 1.5;
+    font-size: 0.95rem;
     color: #555;
-    /* Обрезаем текст после 3 строк */
+    line-height: 1.5;
+    margin-bottom: 1.5rem;
     display: -webkit-box;
     -webkit-line-clamp: 3;
     -webkit-box-orient: vertical;
@@ -91,50 +90,60 @@
   }
 
   &__subtitle {
-    margin: 0 0 0.5rem 0;
-    font-size: 0.85rem;
+    font-size: 1rem;
     font-weight: 700;
-    color: #2c2b2b;
-    text-transform: uppercase;
+    color: #333;
+    margin: 0 0 0.5rem 0;
+    border-top: 1px solid #eee;
+    padding-top: 1rem;
   }
 
   &__ingredients {
-    padding-left: 1.2rem;
-    margin: 0;
-    display: flex;
-    flex-direction: column;
-    gap: 0.2rem;
+    list-style: none;
+    padding: 0;
+    margin: 0 0 1.5rem 0;
 
     li {
-      font-size: 0.85rem;
+      font-size: 0.9rem;
       color: #444;
+      margin-bottom: 0.3rem;
+      display: flex;
+      gap: 0.5rem;
+
+      .amount {
+        font-weight: 700;
+        color: #2c2b2b;
+        min-width: 60px;
+      }
     }
   }
 
+  &__footer {
+    margin-top: auto;
+    padding: 0 1.5rem 1.5rem 1.5rem;
+  }
+
   .detailed-btn {
+    display: block;
+    text-align: center;
+    background: #ffdb63;
+    color: #2c2b2b;
     text-decoration: none;
-    color: #0c0c0c;
-    position: absolute;
-    bottom: 1rem;
-    right: 1rem;
-    border-radius: 4px;
-    border: 1px solid #d7a820;
-    padding: 0.4rem 1rem;
-    background-color: #ffdb63;
-    font-weight: 600;
-    font-size: 0.9rem;
-    transition: background-color 0.2s ease;
+    padding: 0.75rem;
+    border-radius: 6px;
+    font-weight: 700;
+    transition: background 0.2s;
 
     &:hover {
-      background-color: #d7a820;
+      background: #d7a820;
     }
   }
 }
 
 .no-data {
-  text-align: center;
-  font-size: 1.2rem;
-  color: #666;
   grid-column: 1 / -1;
-  margin-top: 2rem;
+  text-align: center;
+  padding: 4rem;
+  font-size: 1.2rem;
+  color: #888;
 }

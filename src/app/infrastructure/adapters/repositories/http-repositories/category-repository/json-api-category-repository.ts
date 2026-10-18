@@ -42,7 +42,6 @@ export class JsonApiCategoryRepository implements ICategoryRepository {
   }
 }
 
-
 interface DeserializedCategory {
   id: string;
   title: string;

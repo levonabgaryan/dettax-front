@@ -1,46 +1,55 @@
 <app-async-state [isLoading]="isLoading()" [errorMessage]="errorMessage()">
   @if (category(); as cat) {
-    <h1 class="page-title">Related recipes to {{ cat.getName() }}</h1>
+    <div class="page-container">
+      <h1 class="page-title">Related recipes to {{ cat.getName() }}</h1>
 
-    <div class="container">
-      @for (recipe of recipes(); track recipe.getId()) {
-        <article class="recipe-card">
-          @if (recipe.getImageUrl(); as imgUrl) {
-            <img
-              [ngSrc]="imgUrl"
-              [alt]="recipe.getName()"
-              width="320"
-              height="200"
-              class="recipe-card__image"
-            />
-          }
+      <div class="recipes-grid">
+        @for (recipe of recipes(); track recipe.getId()) {
+          <article class="recipe-card">
+            @if (recipe.getImageUrl(); as imgUrl) {
+              <img
+                [ngSrc]="imgUrl"
+                [alt]="recipe.getName()"
+                width="400"
+                height="250"
+                class="recipe-card__image"
+              />
+            }
 
-          <div class="recipe-card__body">
-            <h2 class="recipe-card__title">{{ recipe.getName() }}</h2>
+            <div class="recipe-card__body">
+              <h2 class="recipe-card__title">{{ recipe.getName() }}</h2>
 
-            <div class="recipe-card__meta-info">
-              <span>{{ recipe.getCountry() }}</span>
+              <div class="recipe-card__meta">
+                <span class="country-tag">{{ recipe.getCountry() }}</span>
 
-              @for (recipeCategory of recipe.getCategories(); track recipeCategory.getId()) {
-                <span class="category-tag">{{ recipeCategory.getName() }}</span>
-              }
+                @for (recipeCategory of recipe.getCategories(); track recipeCategory.getId()) {
+                  <span class="category-tag">{{ recipeCategory.getName() }}</span>
+                }
+              </div>
+
+              <p class="recipe-card__description">{{ recipe.getDescription() }}</p>
+
+              <h3 class="recipe-card__subtitle">Ingredients</h3>
+              <ul class="recipe-card__ingredients">
+                @for (ingredient of recipe.getIngredients(); track ingredient.name) {
+                  <li>
+                    <span class="amount">{{ ingredient.amount }} {{ ingredient.unit }}</span>
+                    {{ ingredient.name }}
+                  </li>
+                }
+              </ul>
             </div>
 
-            <p class="recipe-card__description">{{ recipe.getDescription() }}</p>
-
-            <h3 class="recipe-card__subtitle">Ingredients</h3>
-            <ul class="recipe-card__ingredients">
-              @for (ingredient of recipe.getIngredients(); track ingredient.name) {
-                <li>{{ ingredient.amount }} {{ ingredient.unit }} {{ ingredient.name }}</li>
-              }
-            </ul>
+            <div class="recipe-card__footer">
+              <a [routerLink]="['/recipe', recipe.getId()]" class="detailed-btn">View Recipe</a>
+            </div>
+          </article>
+        } @empty {
+          <div class="no-data">
+            <p>No recipes found for this category.</p>
           </div>
-
-          <a [routerLink]="['/recipe', recipe.getId()]" class="detailed-btn">Detailed</a>
-        </article>
-      } @empty {
-        <p class="no-data">No recipes found for this category.</p>
-      }
+        }
+      </div>
     </div>
   }
 </app-async-state>

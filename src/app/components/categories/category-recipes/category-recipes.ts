@@ -51,10 +51,13 @@ export class CategoryRecipes implements OnInit {
       this.category.set(category);
 
       if (category) {
+        const pageSize = 50;
+        const pageNumber = 1;
+
         const recipes = await this.recipeQueryService.getAllByCategoryPaged(
           category,
-          1,
-          50
+          pageSize,
+          pageNumber,
         );
         this.recipes.set(recipes);
       }

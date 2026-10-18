@@ -157,14 +157,14 @@ export class JsonApiRecipeRepository implements IRecipeRepository {
   private mapJsonaToDomain(item: DeserializedRecipe): Recipe {
     const author = item.author
       ? new Author(
-        item.author.id,
-        item.author.firstName,
-        item.author.lastName,
-        item.author.email,
-        new Set(),
-        new Date(item.author.createdAt || Date.now()),
-        new Date(item.author.updatedAt || Date.now()),
-      )
+          item.author.id,
+          item.author.firstName,
+          item.author.lastName,
+          item.author.email,
+          new Set(),
+          new Date(item.author.createdAt || Date.now()),
+          new Date(item.author.updatedAt || Date.now()),
+        )
       : null;
 
     const categories = new Set<Category>();
@@ -201,7 +201,6 @@ export class JsonApiRecipeRepository implements IRecipeRepository {
     );
   }
 }
-
 
 export interface IngredientJsonApi {
   name: string;
@@ -241,7 +240,6 @@ export interface RecipeDocumentJsonApi {
   links: { self: string };
   data: RecipeResourceJsonApi;
 }
-
 
 interface DeserializedRecipe {
   id: string;

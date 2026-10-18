@@ -5,13 +5,11 @@
         <h1 class="recipe-detail__title">{{ r.getName() }}</h1>
 
         <div class="recipe-detail__meta">
-          <!-- 👇 Перебираем ВСЕ категории рецепта -->
           @for (cat of r.getCategories(); track cat.getId()) {
             <span class="recipe-detail__tag">{{ cat.getName() }}</span>
           }
           <span class="recipe-detail__tag">{{ r.getCountry() }}</span>
 
-          <!-- 👇 Выводим автора рецепта -->
           @if (r.getAuthor(); as author) {
             <span class="recipe-detail__tag" style="background: #e6f4ea; color: #1e8e3e;">
               By {{ author.getFirstName() }} {{ author.getLastName() }}
