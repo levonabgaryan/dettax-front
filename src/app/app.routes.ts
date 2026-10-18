@@ -3,8 +3,10 @@ import { RecipeDetail } from './components/recipes/recipe-detail/recipe-detail';
 import { CategoryList } from './components/categories/category-list/category-list.component';
 import { CategoryDetail } from './components/categories/category-detail/category-detail';
 import { CategoryRecipes } from './components/categories/category-recipes/category-recipes';
+import { RecipeListComponent } from './components/recipes/recipe-list/recipe-list.component';
 
 export const routes: Routes = [
+  { path: 'recipes', component: RecipeListComponent },
   { path: 'recipe/:id', component: RecipeDetail },
   { path: 'categories', component: CategoryList },
   { path: 'category/:id', component: CategoryDetail },

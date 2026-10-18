@@ -1,0 +1,135 @@
+.home {
+  padding: 2rem;
+  max-width: 1400px;
+  margin: 0 auto;
+
+  h1 {
+    text-align: center;
+    font-size: 2.5rem;
+    font-weight: 700;
+    color: #2c2b2b;
+    margin-bottom: 3rem;
+    margin-top: 2rem;
+  }
+}
+
+.recipes-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+  gap: 1.5rem;
+}
+
+.recipe-card {
+  display: flex;
+  flex-direction: column;
+  border: 1px solid #e0e0e0;
+  border-radius: 8px;
+  overflow: hidden;
+  background: #fff;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+
+  &:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 12px 24px rgba(0, 0, 0, 0.1);
+  }
+
+  &__image {
+    width: 100%;
+    height: 200px;
+    object-fit: cover;
+  }
+
+  &__body {
+    padding: 1.5rem;
+    display: flex;
+    flex-direction: column;
+    flex-grow: 1;
+  }
+
+  &__title {
+    margin: 0 0 0.5rem 0;
+    font-size: 1.5rem;
+    color: #2c2b2b;
+  }
+
+  &__meta {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+    margin-bottom: 1rem;
+
+    .country-tag {
+      background: #e6f4ea;
+      color: #1e8e3e;
+      padding: 0.2rem 0.6rem;
+      border-radius: 12px;
+      font-size: 0.75rem;
+      font-weight: 600;
+    }
+
+    .category-tag {
+      background: #f0f0f0;
+      color: #555;
+      padding: 0.2rem 0.6rem;
+      border-radius: 12px;
+      font-size: 0.75rem;
+    }
+  }
+
+  &__description {
+    color: #555;
+    font-size: 0.95rem;
+    line-height: 1.5;
+    margin-bottom: 1.5rem;
+    display: -webkit-box;
+    -webkit-line-clamp: 3;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+  }
+
+  &__footer {
+    margin-top: auto;
+    padding: 0 1.5rem 1.5rem 1.5rem;
+  }
+
+  .detailed-btn {
+    display: block;
+    text-align: center;
+    background: #ffdb63;
+    color: #2c2b2b;
+    text-decoration: none;
+    padding: 0.75rem;
+    border-radius: 6px;
+    font-weight: 700;
+    transition: background 0.2s;
+
+    &:hover { background: #d7a820; }
+  }
+}
+
+.pagination {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 0.5rem;
+  margin-top: 3rem;
+
+  .btn-page, .btn-page-number {
+    padding: 0.5rem 1rem;
+    border: 1px solid #ddd;
+    background: #fff;
+    border-radius: 6px;
+    cursor: pointer;
+    font-weight: 600;
+    transition: all 0.2s;
+
+    &:disabled { opacity: 0.5; cursor: not-allowed; }
+    &:hover:not(:disabled):not(.active) { background: #f0f0f0; }
+  }
+
+  .btn-page-number.active {
+    background: #ffdb63;
+    border-color: #ffdb63;
+    color: #2c2b2b;
+  }
+}

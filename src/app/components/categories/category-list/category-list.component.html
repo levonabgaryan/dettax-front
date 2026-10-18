@@ -6,11 +6,18 @@
       @for (categoryCard of allCategories(); track categoryCard.getId()) {
         <section class="category-card">
 
-          @if (categoryCard.getImgUrl(); as imgUrl) {
-            <img [ngSrc]="imgUrl" [alt]="categoryCard.getName()" width="400" height="300" />
-          } @else {
-            <div class="placeholder-image">No Image</div>
-          }
+          <div class="category-card__image-wrapper">
+            @if (categoryCard.getImgUrl(); as imgUrl) {
+              <img
+                [ngSrc]="imgUrl"
+                [alt]="categoryCard.getName()"
+                fill
+                class="category-card__image"
+              />
+            } @else {
+              <div class="placeholder-image">No Image</div>
+            }
+          </div>
 
           <div class="category-card__content">
             <h2 class="category-name">{{ categoryCard.getName() }}</h2>
@@ -30,14 +37,26 @@
       }
     </div>
 
-    <div class="pagination">
-      <button (click)="prevPage()" [disabled]="pageNumber() === 1" class="btn-page">
-        &larr; Previous
-      </button>
-      <span class="page-info">Page {{ pageNumber() }}</span>
-      <button (click)="nextPage()" class="btn-page">
-        Next &rarr;
-      </button>
-    </div>
+    <!-- 👇 Блок динамической пагинации -->
+    @if (totalPages() > 1) {
+      <div class="pagination">
+        <button (click)="goToPage(pageNumber() - 1)" [disabled]="pageNumber() === 1" class="btn-page">
+          &larr; Prev
+        </button>
+
+        @for (page of pages(); track page) {
+          <button
+            (click)="goToPage(page)"
+            [class.active]="page === pageNumber()"
+            class="btn-page-number">
+            {{ page }}
+          </button>
+        }
+
+        <button (click)="goToPage(pageNumber() + 1)" [disabled]="pageNumber() === totalPages()" class="btn-page">
+          Next &rarr;
+        </button>
+      </div>
+    }
   </section>
 </app-async-state>

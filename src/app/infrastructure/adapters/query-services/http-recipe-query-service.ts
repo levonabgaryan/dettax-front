@@ -1,11 +1,18 @@
 import { HttpClient, HttpHeaders, HttpParams } from '@angular/common/http';
 import { firstValueFrom } from 'rxjs';
 import { Jsona } from 'jsona';
-import { IRecipeQueryService } from '../../../core/application/ports/query-services/recipe-query-service';
+import {
+  IRecipeQueryService,
+  PaginatedRecipes,
+} from '../../../core/application/ports/query-services/recipe-query-service';
 import { Category } from '../../../core/domain/entities/category';
-import { Recipe } from '../../../core/domain/entities/recipe';
 import { Author } from '../../../core/domain/entities/author';
+import { Recipe } from '../../../core/domain/entities/recipe';
 import { Ingredient } from '../../../core/domain/value-objects/ingredient';
+
+interface JsonApiMeta {
+  total?: number;
+}
 
 export class HttpRecipeQueryService implements IRecipeQueryService {
   private static readonly baseUrl = 'http://localhost:5247';
@@ -19,13 +26,19 @@ export class HttpRecipeQueryService implements IRecipeQueryService {
     this.jsona = new Jsona();
   }
 
+  public async getAllPaged(pageSize: number, pageNumber: number): Promise<PaginatedRecipes> {
+    const url = `${HttpRecipeQueryService.baseUrl}/recipes`;
+    return this.fetchAndMapRecipes(url, pageSize, pageNumber);
+  }
+
   public async getAllByCategoryPaged(
     category: Category,
     pageSize: number,
     pageNumber: number,
   ): Promise<Recipe[]> {
     const url = `${HttpRecipeQueryService.baseUrl}/categories/${category.getId()}/recipes`;
-    return this.fetchAndMapRecipes(url, pageSize, pageNumber);
+    const result = await this.fetchAndMapRecipes(url, pageSize, pageNumber);
+    return result.data;
   }
 
   public async getAllByAuthorPaged(
@@ -34,14 +47,16 @@ export class HttpRecipeQueryService implements IRecipeQueryService {
     pageNumber: number,
   ): Promise<Recipe[]> {
     const url = `${HttpRecipeQueryService.baseUrl}/authors/${author.getId()}/recipes`;
-    return this.fetchAndMapRecipes(url, pageSize, pageNumber);
+    const result = await this.fetchAndMapRecipes(url, pageSize, pageNumber);
+    return result.data;
   }
 
+  // Общий метод для загрузки
   private async fetchAndMapRecipes(
     url: string,
     pageSize: number,
     pageNumber: number,
-  ): Promise<Recipe[]> {
+  ): Promise<PaginatedRecipes> {
     let params = new HttpParams();
     params = params.append('page[number]', pageNumber.toString());
     params = params.append('page[size]', pageSize.toString());
@@ -54,14 +69,19 @@ export class HttpRecipeQueryService implements IRecipeQueryService {
       }),
     );
 
-    const deserialized = this.jsona.deserialize(rawResponse) as
+    const total = (rawResponse['meta'] as JsonApiMeta)?.total || 0;
+
+    const deserialized = this.jsona.deserialize(rawResponse as unknown as never) as
       DeserializedRecipe[] | { collection: DeserializedRecipe[] };
 
     const items: DeserializedRecipe[] = Array.isArray(deserialized)
       ? deserialized
       : deserialized.collection || [];
 
-    return items.map((item) => this.mapToDomain(item));
+    return {
+      data: items.map((item) => this.mapToDomain(item)),
+      total: total,
+    };
   }
 
   private mapToDomain(item: DeserializedRecipe): Recipe {
@@ -112,41 +132,29 @@ export class HttpRecipeQueryService implements IRecipeQueryService {
   }
 }
 
-interface IngredientJson {
-  name: string;
-  amount: number;
-  unit: string;
-}
-
-interface AuthorJson {
-  id: string;
-  firstName: string;
-  lastName: string;
-  email: string;
-  createdAt?: string;
-  updatedAt?: string;
-}
-
-interface CategoryJson {
-  id: string;
-  title: string;
-  description: string | null;
-  imgUrl: string | null;
-  createdAt: string;
-  updatedAt: string;
-}
-
 interface DeserializedRecipe {
   id: string;
   title: string;
   country: string;
   description: string | null;
   imageUrl: string | null;
-  ingredients: IngredientJson[];
+  ingredients: { name: string; amount: number; unit: string }[];
   createdAt: string;
   updatedAt: string;
-  author?: AuthorJson | null;
-  categories?: CategoryJson[];
+  author?: {
+    id: string;
+    firstName: string;
+    lastName: string;
+    email: string;
+    createdAt?: string;
+    updatedAt?: string;
+  } | null;
+  categories?: {
+    id: string;
+    title: string;
+    description: string | null;
+    imgUrl: string | null;
+    createdAt: string;
+    updatedAt: string;
+  }[];
 }
-
-// all categories

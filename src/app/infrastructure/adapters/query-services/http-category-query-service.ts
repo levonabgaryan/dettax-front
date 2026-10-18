@@ -1,8 +1,15 @@
 import { HttpClient, HttpHeaders, HttpParams } from '@angular/common/http';
 import { firstValueFrom } from 'rxjs';
 import { Jsona } from 'jsona';
-import { ICategoryQueryService } from '../../../core/application/ports/query-services/category-query-service';
+import {
+  ICategoryQueryService,
+  PaginatedCategories,
+} from '../../../core/application/ports/query-services/category-query-service';
 import { Category } from '../../../core/domain/entities/category';
+
+interface JsonApiMeta {
+  total?: number;
+}
 
 export class HttpCategoryQueryService implements ICategoryQueryService {
   private static readonly baseUrl = 'http://localhost:5247/categories';
@@ -16,7 +23,7 @@ export class HttpCategoryQueryService implements ICategoryQueryService {
     this.jsona = new Jsona();
   }
 
-  public async getAllPaged(pageSize: number, pageNumber: number): Promise<Category[]> {
+  public async getAllPaged(pageSize: number, pageNumber: number): Promise<PaginatedCategories> {
     let params = new HttpParams();
     params = params.append('page[number]', pageNumber.toString());
     params = params.append('page[size]', pageSize.toString());
@@ -28,14 +35,19 @@ export class HttpCategoryQueryService implements ICategoryQueryService {
       }),
     );
 
-    const deserialized = this.jsona.deserialize(rawResponse) as
+    const total = (rawResponse['meta'] as JsonApiMeta)?.total || 0;
+
+    const deserialized = this.jsona.deserialize(rawResponse as unknown as never) as
       DeserializedCategory[] | { collection: DeserializedCategory[] };
 
     const items: DeserializedCategory[] = Array.isArray(deserialized)
       ? deserialized
       : deserialized.collection || [];
 
-    return items.map((item) => this.mapToDomain(item));
+    return {
+      data: items.map((item) => this.mapToDomain(item)),
+      total: total,
+    };
   }
 
   private mapToDomain(item: DeserializedCategory): Category {

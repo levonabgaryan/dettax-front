@@ -1,0 +1,50 @@
+<app-async-state [isLoading]="isLoading()" [errorMessage]="errorMessage()">
+  <section class="home">
+    <h1>All Recipes</h1>
+
+    <div class="recipes-grid">
+      @for (recipe of allRecipes(); track recipe.getId()) {
+        <article class="recipe-card">
+          @if (recipe.getImageUrl(); as imgUrl) {
+            <img [ngSrc]="imgUrl" [alt]="recipe.getName()" width="400" height="250" class="recipe-card__image" />
+          }
+
+          <div class="recipe-card__body">
+            <h2 class="recipe-card__title">{{ recipe.getName() }}</h2>
+
+            <div class="recipe-card__meta">
+              <span class="country-tag">{{ recipe.getCountry() }}</span>
+              @for (cat of recipe.getCategories(); track cat.getId()) {
+                <span class="category-tag">{{ cat.getName() }}</span>
+              }
+            </div>
+
+            <p class="recipe-card__description">{{ recipe.getDescription() }}</p>
+          </div>
+
+          <div class="recipe-card__footer">
+            <a [routerLink]="['/recipe', recipe.getId()]" class="detailed-btn">View Recipe</a>
+          </div>
+        </article>
+      } @empty {
+        <p class="no-data">No recipes found.</p>
+      }
+    </div>
+
+    @if (totalPages() > 1) {
+      <div class="pagination">
+        <button (click)="goToPage(pageNumber() - 1)" [disabled]="pageNumber() === 1" class="btn-page">
+          &larr; Prev
+        </button>
+        @for (page of pages(); track page) {
+          <button (click)="goToPage(page)" [class.active]="page === pageNumber()" class="btn-page-number">
+            {{ page }}
+          </button>
+        }
+        <button (click)="goToPage(pageNumber() + 1)" [disabled]="pageNumber() === totalPages()" class="btn-page">
+          Next &rarr;
+        </button>
+      </div>
+    }
+  </section>
+</app-async-state>

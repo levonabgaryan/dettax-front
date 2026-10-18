@@ -10,4 +10,10 @@ export interface IRecipeQueryService {
   ): Promise<Recipe[]>;
 
   getAllByAuthorPaged(author: Author, pageSize: number, pageNumber: number): Promise<Recipe[]>;
+  getAllPaged(pageSize: number, pageNumber: number): Promise<PaginatedRecipes>;
+}
+
+export interface PaginatedRecipes {
+  data: Recipe[];
+  total: number;
 }
