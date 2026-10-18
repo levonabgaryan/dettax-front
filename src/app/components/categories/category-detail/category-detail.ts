@@ -2,10 +2,10 @@ import { Component, Inject, OnInit, signal } from '@angular/core';
 import { Category } from '../../../core/domain/entities/category';
 import { AsyncState } from '../../shared/async-state/async-state';
 import { NgOptimizedImage } from '@angular/common';
-import { ICategoryRepository } from '../../../core/application/ports/repositories/category-repository';
 import { ActivatedRoute } from '@angular/router';
-import { CATEGORY_REPOSITORY } from '../../../infrastructure/di/repositories';
 import { CategoriesAreNotLoadedError } from '../../../core/application/errors/categories-are-not-loaded-error';
+import { ICategoryRepository } from '../../../core/application/ports/repositories/category-repository';
+import { CATEGORY_REPOSITORY } from '../../../infrastructure/di/repositories';
 
 @Component({
   selector: 'app-category-detail',
@@ -31,9 +31,9 @@ export class CategoryDetail implements OnInit {
   }
 
   public async ngOnInit(): Promise<void> {
-    const id = Number(this.route.snapshot.paramMap.get('id'));
+    const id = String(this.route.snapshot.paramMap.get('id'));
 
-    if (isNaN(id)) {
+    if (!id) {
       this.errorMessage.set('Invalid category id');
       return;
     }

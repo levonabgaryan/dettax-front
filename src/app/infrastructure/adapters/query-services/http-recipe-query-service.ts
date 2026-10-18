@@ -1,14 +1,14 @@
 import { HttpClient, HttpHeaders, HttpParams } from '@angular/common/http';
 import { firstValueFrom } from 'rxjs';
+import { Jsona } from 'jsona';
 import { IRecipeQueryService } from '../../../core/application/ports/query-services/recipe-query-service';
 import { Category } from '../../../core/domain/entities/category';
 import { Recipe } from '../../../core/domain/entities/recipe';
 import { Author } from '../../../core/domain/entities/author';
 import { Ingredient } from '../../../core/domain/value-objects/ingredient';
-import Jsona from 'jsona';
 
 export class HttpRecipeQueryService implements IRecipeQueryService {
-  private static readonly baseUrl = 'http://localhost:5247/categories';
+  private static readonly baseUrl = 'http://localhost:5247';
   private static readonly headers = new HttpHeaders({ Accept: 'application/vnd.api+json' });
 
   private readonly httpClient: HttpClient;
@@ -24,14 +24,28 @@ export class HttpRecipeQueryService implements IRecipeQueryService {
     pageSize: number,
     pageNumber: number,
   ): Promise<Recipe[]> {
-    const categoryId = category.getId();
+    const url = `${HttpRecipeQueryService.baseUrl}/categories/${category.getId()}/recipes`;
+    return this.fetchAndMapRecipes(url, pageSize, pageNumber);
+  }
 
+  public async getAllByAuthorPaged(
+    author: Author,
+    pageSize: number,
+    pageNumber: number,
+  ): Promise<Recipe[]> {
+    const url = `${HttpRecipeQueryService.baseUrl}/authors/${author.getId()}/recipes`;
+    return this.fetchAndMapRecipes(url, pageSize, pageNumber);
+  }
+
+  private async fetchAndMapRecipes(
+    url: string,
+    pageSize: number,
+    pageNumber: number,
+  ): Promise<Recipe[]> {
     let params = new HttpParams();
     params = params.append('page[number]', pageNumber.toString());
     params = params.append('page[size]', pageSize.toString());
     params = params.append('include', 'author,categories');
-
-    const url = `${HttpRecipeQueryService.baseUrl}/${categoryId}/recipes`;
 
     const rawResponse = await firstValueFrom(
       this.httpClient.get<Record<string, unknown>>(url, {
@@ -134,3 +148,5 @@ interface DeserializedRecipe {
   author?: AuthorJson | null;
   categories?: CategoryJson[];
 }
+
+// all categories
