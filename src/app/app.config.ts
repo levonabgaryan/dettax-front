@@ -1,16 +1,22 @@
 import { ApplicationConfig, provideBrowserGlobalErrorListeners } from '@angular/core';
 import { provideRouter } from '@angular/router';
 import { HttpClient, provideHttpClient } from '@angular/common/http';
+import { JsonApi } from 'devour-client-ts';
+
 import { routes } from './app.routes';
+import { createJsonApi } from './infrastructure/json-api/resources.relationships';
+import { DevourRecipeRepository } from './infrastructure/adapters/repositories/devour-recipe.repository';
+import { RECIPE_REPOSITORY } from './infrastructure/di/repositories';
+import { DevourRecipeQueryService } from './infrastructure/json-api/query-services/recipe-query.service';
+import { DevourCategoryQueryService } from './infrastructure/json-api/query-services/category-query.service';
+import { DevourAuthorQueryService } from './infrastructure/json-api/query-services/author-query.service';
+import {
+  RECIPE_QUERY_SERVICE,
+  CATEGORY_QUERY_SERVICE,
+  AUTHOR_QUERY_SERVICE,
+} from './infrastructure/di/query-services';
 
-import { JsonApiRecipeRepository } from './infrastructure/adapters/repositories/http-repositories/recipe-repository/json-api-recipe-repository';
-import { JsonApiCategoryRepository } from './infrastructure/adapters/repositories/http-repositories/category-repository/json-api-category-repository';
-import { HttpRecipeQueryService } from './infrastructure/adapters/query-services/http-recipe-query-service';
-import { HttpCategoryQueryService } from './infrastructure/adapters/query-services/http-category-query-service';
 import { HttpUserService } from './infrastructure/services/http-user-service';
-
-import { RECIPE_REPOSITORY, CATEGORY_REPOSITORY } from './infrastructure/di/repositories';
-import { RECIPE_QUERY_SERVICE, CATEGORY_QUERY_SERVICE } from './infrastructure/di/query-services';
 
 export const appConfig: ApplicationConfig = {
   providers: [
@@ -18,27 +24,37 @@ export const appConfig: ApplicationConfig = {
     provideRouter(routes),
     provideHttpClient(),
 
+    // ─── JsonApi (singleton) ──────────────────────────────────
     {
-      provide: RECIPE_REPOSITORY,
-      useFactory: (httpClient: HttpClient) => new JsonApiRecipeRepository(httpClient),
-      deps: [HttpClient],
-    },
-    {
-      provide: CATEGORY_REPOSITORY,
-      useFactory: (httpClient: HttpClient) => new JsonApiCategoryRepository(httpClient),
-      deps: [HttpClient],
+      provide: JsonApi,
+      useFactory: createJsonApi,
     },
 
+    // ─── Repositories (write) ─────────────────────────────────
+    {
+      provide: RECIPE_REPOSITORY,
+      useFactory: (jsonApi: JsonApi) => new DevourRecipeRepository(jsonApi),
+      deps: [JsonApi],
+    },
+
+    // ─── Query services (read) ────────────────────────────────
     {
       provide: RECIPE_QUERY_SERVICE,
-      useFactory: (httpClient: HttpClient) => new HttpRecipeQueryService(httpClient),
+      useFactory: (httpClient: HttpClient) => new DevourRecipeQueryService(httpClient),
       deps: [HttpClient],
     },
     {
       provide: CATEGORY_QUERY_SERVICE,
-      useFactory: (httpClient: HttpClient) => new HttpCategoryQueryService(httpClient),
+      useFactory: (httpClient: HttpClient) => new DevourCategoryQueryService(httpClient),
       deps: [HttpClient],
     },
+    {
+      provide: AUTHOR_QUERY_SERVICE,
+      useFactory: (httpClient: HttpClient) => new DevourAuthorQueryService(httpClient),
+      deps: [HttpClient],
+    },
+
+    // ─── User service (registration) ──────────────────────────
     {
       provide: HttpUserService,
       useFactory: (httpClient: HttpClient) => new HttpUserService(httpClient),

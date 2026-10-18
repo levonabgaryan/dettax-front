@@ -1,10 +1,11 @@
 import { Component, Inject, OnInit, signal, computed } from '@angular/core';
 import { NgOptimizedImage } from '@angular/common';
-import { AsyncState } from '../../shared/async-state/async-state';
-import { Recipe } from '../../../core/domain/entities/recipe';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
-import { IRecipeQueryService } from '../../../core/application/ports/query-services/recipe-query-service';
+
+import { AsyncState } from '../../shared/async-state/async-state';
 import { RECIPE_QUERY_SERVICE } from '../../../infrastructure/di/query-services';
+import type { DevourRecipeQueryService } from '../../../infrastructure/json-api/query-services/recipe-query.service';
+import type { RecipeResource } from '../../../infrastructure/json-api/resources/recipe';
 
 @Component({
   selector: 'app-recipe-list',
@@ -14,11 +15,11 @@ import { RECIPE_QUERY_SERVICE } from '../../../infrastructure/di/query-services'
   styleUrl: './recipe-list.component.scss',
 })
 export class RecipeList implements OnInit {
-  private readonly recipeQueryService: IRecipeQueryService;
+  private readonly recipeQueryService: DevourRecipeQueryService;
   private readonly router: Router;
   private readonly route: ActivatedRoute;
 
-  public readonly allRecipes = signal<Recipe[]>([]);
+  public readonly allRecipes = signal<RecipeResource[]>([]);
   public readonly isLoading = signal(false);
   public readonly errorMessage = signal<string | null>(null);
 
@@ -26,11 +27,15 @@ export class RecipeList implements OnInit {
   public readonly pageSize = signal(6);
   public readonly totalItems = signal(0);
 
-  public readonly totalPages = computed(() => Math.ceil(this.totalItems() / this.pageSize()));
-  public readonly pages = computed(() => Array.from({ length: this.totalPages() }, (_, i) => i + 1));
+  public readonly totalPages = computed(() =>
+    Math.ceil(this.totalItems() / this.pageSize()),
+  );
+  public readonly pages = computed(() =>
+    Array.from({ length: this.totalPages() }, (_, i) => i + 1),
+  );
 
   constructor(
-    @Inject(RECIPE_QUERY_SERVICE) recipeQueryService: IRecipeQueryService,
+    @Inject(RECIPE_QUERY_SERVICE) recipeQueryService: DevourRecipeQueryService,
     router: Router,
     route: ActivatedRoute,
   ) {
@@ -51,7 +56,10 @@ export class RecipeList implements OnInit {
     this.errorMessage.set(null);
 
     try {
-      const result = await this.recipeQueryService.getAllPaged(this.pageSize(), this.pageNumber());
+      const result = await this.recipeQueryService.getAllPaged(
+        this.pageNumber(),
+        this.pageSize(),
+      );
       this.allRecipes.set(result.data);
       this.totalItems.set(result.total);
     } catch (e) {

@@ -3,14 +3,14 @@
     <h1>Find your preferred recipe by category</h1>
 
     <div class="categories-list">
-      @for (categoryCard of allCategories(); track categoryCard.getId()) {
+      @for (category of allCategories(); track category.id) {
         <section class="category-card">
 
           <div class="category-card__image-wrapper">
-            @if (categoryCard.getImgUrl(); as imgUrl) {
+            @if (category.imgUrl) {
               <img
-                [ngSrc]="imgUrl"
-                [alt]="categoryCard.getName()"
+                [ngSrc]="category.imgUrl"
+                [alt]="category.title"
                 fill
                 class="category-card__image"
               />
@@ -20,12 +20,12 @@
           </div>
 
           <div class="category-card__content">
-            <h2 class="category-name">{{ categoryCard.getName() }}</h2>
-            <p class="category-description">{{ categoryCard.getDescription() }}</p>
+            <h2 class="category-name">{{ category.title }}</h2>
+            <p class="category-description">{{ category.description }}</p>
 
             <div class="category-card__actions">
-              <a [routerLink]="['/category', categoryCard.getId()]" class="more-btn"> More </a>
-              <a [routerLink]="['/category', categoryCard.getId(), 'recipes']" class="related-recipes-btn">
+              <a [routerLink]="['/category', category.id]" class="more-btn"> More </a>
+              <a [routerLink]="['/category', category.id, 'recipes']" class="related-recipes-btn">
                 Related Recipes
               </a>
             </div>
@@ -37,10 +37,12 @@
       }
     </div>
 
-    <!-- 👇 Блок динамической пагинации -->
     @if (totalPages() > 1) {
       <div class="pagination">
-        <button (click)="goToPage(pageNumber() - 1)" [disabled]="pageNumber() === 1" class="btn-page">
+        <button
+          (click)="goToPage(pageNumber() - 1)"
+          [disabled]="pageNumber() === 1"
+          class="btn-page">
           &larr; Prev
         </button>
 
@@ -53,7 +55,10 @@
           </button>
         }
 
-        <button (click)="goToPage(pageNumber() + 1)" [disabled]="pageNumber() === totalPages()" class="btn-page">
+        <button
+          (click)="goToPage(pageNumber() + 1)"
+          [disabled]="pageNumber() === totalPages()"
+          class="btn-page">
           Next &rarr;
         </button>
       </div>

@@ -1,15 +1,16 @@
 <app-async-state [isLoading]="isLoading()" [errorMessage]="errorMessage()">
   @if (category(); as cat) {
     <div class="page-container">
-      <h1 class="page-title">Related recipes to {{ cat.getName() }}</h1>
+      <h1 class="page-title">Related recipes to {{ cat.title }}</h1>
 
       <div class="recipes-grid">
-        @for (recipe of recipes(); track recipe.getId()) {
+        @for (recipe of recipes(); track recipe.id) {
           <article class="recipe-card">
-            @if (recipe.getImageUrl(); as imgUrl) {
+
+            @if (recipe.imageUrl) {
               <img
-                [ngSrc]="imgUrl"
-                [alt]="recipe.getName()"
+                [ngSrc]="recipe.imageUrl"
+                [alt]="recipe.title"
                 width="400"
                 height="250"
                 class="recipe-card__image"
@@ -17,21 +18,23 @@
             }
 
             <div class="recipe-card__body">
-              <h2 class="recipe-card__title">{{ recipe.getName() }}</h2>
+              <h2 class="recipe-card__title">{{ recipe.title }}</h2>
 
               <div class="recipe-card__meta">
-                <span class="country-tag">{{ recipe.getCountry() }}</span>
+                <span class="country-tag">{{ recipe.country }}</span>
 
-                @for (recipeCategory of recipe.getCategories(); track recipeCategory.getId()) {
-                  <span class="category-tag">{{ recipeCategory.getName() }}</span>
+                <!-- `recipe.categories` может быть undefined, если include не сработал,
+                     поэтому используем `?? []` для безопасного перебора -->
+                @for (recipeCategory of recipe.categories ?? []; track recipeCategory.id) {
+                  <span class="category-tag">{{ recipeCategory.title }}</span>
                 }
               </div>
 
-              <p class="recipe-card__description">{{ recipe.getDescription() }}</p>
+              <p class="recipe-card__description">{{ recipe.description }}</p>
 
               <h3 class="recipe-card__subtitle">Ingredients</h3>
               <ul class="recipe-card__ingredients">
-                @for (ingredient of recipe.getIngredients(); track ingredient.name) {
+                @for (ingredient of recipe.ingredients; track ingredient.name) {
                   <li>
                     <span class="amount">{{ ingredient.amount }} {{ ingredient.unit }}</span>
                     {{ ingredient.name }}
@@ -41,7 +44,7 @@
             </div>
 
             <div class="recipe-card__footer">
-              <a [routerLink]="['/recipe', recipe.getId()]" class="detailed-btn">View Recipe</a>
+              <a [routerLink]="['/recipe', recipe.id]" class="detailed-btn">View Recipe</a>
             </div>
           </article>
         } @empty {

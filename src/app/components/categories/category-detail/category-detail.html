@@ -1,10 +1,10 @@
 <app-async-state [isLoading]="isLoading()" [errorMessage]="errorMessage()">
   @if (category(); as cat) {
     <article class="category-detail">
-      @if (cat.getImgUrl(); as imgUrl) {
+      @if (cat.imgUrl; as imgUrl) {
         <img
           [ngSrc]="imgUrl"
-          [alt]="cat.getName()"
+          [alt]="cat.title"
           width="400"
           height="300"
           class="category-detail__image"
@@ -12,9 +12,9 @@
       }
 
       <div class="category-detail__body">
-        <h1 class="category-detail__title">{{ cat.getName() }}</h1>
+        <h1 class="category-detail__title">{{ cat.title }}</h1>
 
-        @if (cat.getDescription(); as description) {
+        @if (cat.description; as description) {
           <p class="category-detail__description">{{ description }}</p>
         }
       </div>

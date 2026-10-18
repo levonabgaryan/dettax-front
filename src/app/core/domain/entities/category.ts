@@ -1,7 +1,7 @@
 import { EntityBase } from './entityBase';
 
 export class Category extends EntityBase {
-  private name: string;
+  private title: string;
   private description: string | null;
   private imgUrl: string | null;
 
@@ -14,17 +14,17 @@ export class Category extends EntityBase {
     updatedAt: Date,
   ) {
     super(id, createdAt, updatedAt);
-    this.name = name;
+    this.title = name;
     this.description = description;
     this.imgUrl = imgUrl;
   }
 
-  public getName(): string {
-    return this.name;
+  public getTitle(): string {
+    return this.title;
   }
 
-  public setName(newName: string): void {
-    this.name = newName;
+  public setTitle(newName: string): void {
+    this.title = newName;
   }
 
   public getDescription(): string | null {

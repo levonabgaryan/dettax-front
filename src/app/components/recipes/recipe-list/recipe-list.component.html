@@ -3,27 +3,34 @@
     <h1>All Recipes</h1>
 
     <div class="recipes-grid">
-      @for (recipe of allRecipes(); track recipe.getId()) {
+      @for (recipe of allRecipes(); track recipe.id) {
         <article class="recipe-card">
-          @if (recipe.getImageUrl(); as imgUrl) {
-            <img [ngSrc]="imgUrl" [alt]="recipe.getName()" width="400" height="250" class="recipe-card__image" />
+
+          @if (recipe.imageUrl) {
+            <img
+              [ngSrc]="recipe.imageUrl"
+              [alt]="recipe.title"
+              width="400"
+              height="250"
+              class="recipe-card__image"
+            />
           }
 
           <div class="recipe-card__body">
-            <h2 class="recipe-card__title">{{ recipe.getName() }}</h2>
+            <h2 class="recipe-card__title">{{ recipe.title }}</h2>
 
             <div class="recipe-card__meta">
-              <span class="country-tag">{{ recipe.getCountry() }}</span>
-              @for (cat of recipe.getCategories(); track cat.getId()) {
-                <span class="category-tag">{{ cat.getName() }}</span>
+              <span class="country-tag">{{ recipe.country }}</span>
+              @for (cat of recipe.categories ?? []; track cat.id) {
+                <span class="category-tag">{{ cat.title }}</span>
               }
             </div>
 
-            <p class="recipe-card__description">{{ recipe.getDescription() }}</p>
+            <p class="recipe-card__description">{{ recipe.description }}</p>
           </div>
 
           <div class="recipe-card__footer">
-            <a [routerLink]="['/recipe', recipe.getId()]" class="detailed-btn">View Recipe</a>
+            <a [routerLink]="['/recipe', recipe.id]" class="detailed-btn">View Recipe</a>
           </div>
         </article>
       } @empty {
@@ -33,15 +40,26 @@
 
     @if (totalPages() > 1) {
       <div class="pagination">
-        <button (click)="goToPage(pageNumber() - 1)" [disabled]="pageNumber() === 1" class="btn-page">
+        <button
+          (click)="goToPage(pageNumber() - 1)"
+          [disabled]="pageNumber() === 1"
+          class="btn-page">
           &larr; Prev
         </button>
+
         @for (page of pages(); track page) {
-          <button (click)="goToPage(page)" [class.active]="page === pageNumber()" class="btn-page-number">
+          <button
+            (click)="goToPage(page)"
+            [class.active]="page === pageNumber()"
+            class="btn-page-number">
             {{ page }}
           </button>
         }
-        <button (click)="goToPage(pageNumber() + 1)" [disabled]="pageNumber() === totalPages()" class="btn-page">
+
+        <button
+          (click)="goToPage(pageNumber() + 1)"
+          [disabled]="pageNumber() === totalPages()"
+          class="btn-page">
           Next &rarr;
         </button>
       </div>

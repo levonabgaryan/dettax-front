@@ -1,10 +1,11 @@
 import { Component, Inject, OnInit, signal, computed } from '@angular/core';
 import { NgOptimizedImage } from '@angular/common';
 import { AsyncState } from '../../shared/async-state/async-state';
-import { Category } from '../../../core/domain/entities/category';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
-import { ICategoryQueryService } from '../../../core/application/ports/query-services/category-query-service';
+
 import { CATEGORY_QUERY_SERVICE } from '../../../infrastructure/di/query-services';
+import type { DevourCategoryQueryService } from '../../../infrastructure/json-api/query-services/category-query.service';
+import type { CategoryResource } from '../../../infrastructure/json-api/resources/category';
 
 @Component({
   selector: 'app-category-list',
@@ -14,11 +15,11 @@ import { CATEGORY_QUERY_SERVICE } from '../../../infrastructure/di/query-service
   styleUrl: './category-list.component.scss',
 })
 export class CategoryList implements OnInit {
-  private readonly categoryQueryService: ICategoryQueryService;
+  private readonly categoryQueryService: DevourCategoryQueryService;
   private readonly router: Router;
   private readonly route: ActivatedRoute;
 
-  public readonly allCategories = signal<Category[]>([]);
+  public readonly allCategories = signal<CategoryResource[]>([]);
   public readonly isLoading = signal(false);
   public readonly errorMessage = signal<string | null>(null);
 
@@ -26,14 +27,16 @@ export class CategoryList implements OnInit {
   public readonly pageSize = signal(6);
   public readonly totalItems = signal(0);
 
-  public readonly totalPages = computed(() => Math.ceil(this.totalItems() / this.pageSize()));
+  public readonly totalPages = computed(() =>
+    Math.ceil(this.totalItems() / this.pageSize()),
+  );
 
   public readonly pages = computed(() =>
     Array.from({ length: this.totalPages() }, (_, i) => i + 1),
   );
 
   constructor(
-    @Inject(CATEGORY_QUERY_SERVICE) categoryQueryService: ICategoryQueryService,
+    @Inject(CATEGORY_QUERY_SERVICE) categoryQueryService: DevourCategoryQueryService,
     router: Router,
     route: ActivatedRoute,
   ) {
@@ -55,8 +58,8 @@ export class CategoryList implements OnInit {
 
     try {
       const result = await this.categoryQueryService.getAllPaged(
-        this.pageSize(),
         this.pageNumber(),
+        this.pageSize(),
       );
       this.allCategories.set(result.data);
       this.totalItems.set(result.total);

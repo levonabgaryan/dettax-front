@@ -1,10 +1,11 @@
 import { Component, Inject, OnInit, signal, WritableSignal } from '@angular/core';
-import { Recipe } from '../../../core/domain/entities/recipe';
 import { NgOptimizedImage } from '@angular/common';
-import { AsyncState } from '../../shared/async-state/async-state';
-import { IRecipeRepository } from '../../../core/application/ports/repositories/recipe-repository';
-import { RECIPE_REPOSITORY } from '../../../infrastructure/di/repositories';
 import { ActivatedRoute, RouterLink } from '@angular/router';
+
+import { AsyncState } from '../../shared/async-state/async-state';
+import { RECIPE_QUERY_SERVICE } from '../../../infrastructure/di/query-services';
+import type { DevourRecipeQueryService } from '../../../infrastructure/json-api/query-services/recipe-query.service';
+import type { RecipeResource } from '../../../infrastructure/json-api/resources/recipe';
 
 @Component({
   selector: 'app-recipe-detail',
@@ -14,21 +15,21 @@ import { ActivatedRoute, RouterLink } from '@angular/router';
   styleUrl: './recipe-detail.scss',
 })
 export class RecipeDetail implements OnInit {
-  private readonly recipeRepository: IRecipeRepository;
+  private readonly recipeQueryService: DevourRecipeQueryService;
   private readonly route: ActivatedRoute;
 
-  public readonly recipe: WritableSignal<Recipe | null>;
+  public readonly recipe: WritableSignal<RecipeResource | null>;
   public readonly isLoading: WritableSignal<boolean>;
   public readonly errorMessage: WritableSignal<string | null>;
 
   constructor(
-    @Inject(RECIPE_REPOSITORY) recipeRepository: IRecipeRepository,
+    @Inject(RECIPE_QUERY_SERVICE) recipeQueryService: DevourRecipeQueryService,
     route: ActivatedRoute,
   ) {
-    this.recipeRepository = recipeRepository;
+    this.recipeQueryService = recipeQueryService;
     this.route = route;
 
-    this.recipe = signal<Recipe | null>(null);
+    this.recipe = signal<RecipeResource | null>(null);
     this.isLoading = signal(false);
     this.errorMessage = signal<string | null>(null);
   }
@@ -45,7 +46,8 @@ export class RecipeDetail implements OnInit {
     this.errorMessage.set(null);
 
     try {
-      const recipe = await this.recipeRepository.getById(id);
+      // getById() already includes `include=author,categories`
+      const recipe = await this.recipeQueryService.getById(id);
       this.recipe.set(recipe);
     } catch (e) {
       this.errorMessage.set('Failed to load recipe. It might not exist.');

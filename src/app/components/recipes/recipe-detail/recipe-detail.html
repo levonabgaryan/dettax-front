@@ -2,27 +2,27 @@
   @if (recipe(); as r) {
     <article class="recipe-detail">
       <header class="recipe-detail__header">
-        <h1 class="recipe-detail__title">{{ r.getName() }}</h1>
+        <h1 class="recipe-detail__title">{{ r.title }}</h1>
 
         <div class="recipe-detail__meta">
-          @for (cat of r.getCategories(); track cat.getId()) {
-            <span class="recipe-detail__tag">{{ cat.getName() }}</span>
+          @for (cat of r.categories ?? []; track cat.id) {
+            <span class="recipe-detail__tag">{{ cat.title }}</span>
           }
-          <span class="recipe-detail__tag">{{ r.getCountry() }}</span>
+          <span class="recipe-detail__tag">{{ r.country }}</span>
 
-          @if (r.getAuthor(); as author) {
+          @if (r.author; as author) {
             <span class="recipe-detail__tag" style="background: #e6f4ea; color: #1e8e3e;">
-              By {{ author.getFirstName() }} {{ author.getLastName() }}
+              By {{ author.firstName }} {{ author.lastName }}
             </span>
           }
         </div>
       </header>
 
       <div class="recipe-detail__layout">
-        @if (r.getImageUrl(); as imgUrl) {
+        @if (r.imageUrl) {
           <img
-            [ngSrc]="imgUrl"
-            [alt]="r.getName()"
+            [ngSrc]="r.imageUrl"
+            [alt]="r.title"
             width="600"
             height="600"
             class="recipe-detail__image"
@@ -30,12 +30,12 @@
         }
 
         <div class="recipe-detail__info">
-          <p class="recipe-detail__description">{{ r.getDescription() }}</p>
+          <p class="recipe-detail__description">{{ r.description }}</p>
 
           <section class="recipe-detail__section">
             <h2 class="recipe-detail__subtitle">Ingredients</h2>
             <ul class="recipe-detail__ingredients">
-              @for (ing of r.getIngredients(); track ing.name) {
+              @for (ing of r.ingredients; track ing.name) {
                 <li>{{ ing.amount }} {{ ing.unit }} {{ ing.name }}</li>
               } @empty {
                 <li>No ingredients listed.</li>
@@ -46,7 +46,13 @@
       </div>
 
       <div class="recipe-detail__footer" style="text-align: center; margin-top: 2rem;">
-        <a routerLink="/categories" class="back-btn" style="color: #666; text-decoration: underline;">Back to categories</a>
+        <a
+          routerLink="/categories"
+          class="back-btn"
+          style="color: #666; text-decoration: underline;"
+        >
+          Back to categories
+        </a>
       </div>
     </article>
   } @else {

@@ -1,13 +1,15 @@
 import { Component, Inject, OnInit, signal } from '@angular/core';
-import { Category } from '../../../core/domain/entities/category';
-import { Recipe } from '../../../core/domain/entities/recipe';
-import { ICategoryRepository } from '../../../core/application/ports/repositories/category-repository';
-import { IRecipeQueryService } from '../../../core/application/ports/query-services/recipe-query-service';
-import { CATEGORY_REPOSITORY } from '../../../infrastructure/di/repositories';
 import { ActivatedRoute, RouterLink } from '@angular/router';
-import { AsyncState } from '../../shared/async-state/async-state';
 import { NgOptimizedImage } from '@angular/common';
+
+import { AsyncState } from '../../shared/async-state/async-state';
+import { CATEGORY_QUERY_SERVICE } from '../../../infrastructure/di/query-services';
 import { RECIPE_QUERY_SERVICE } from '../../../infrastructure/di/query-services';
+
+import type { DevourCategoryQueryService } from '../../../infrastructure/json-api/query-services/category-query.service';
+import type { DevourRecipeQueryService } from '../../../infrastructure/json-api/query-services/recipe-query.service';
+import type { CategoryResource } from '../../../infrastructure/json-api/resources/category';
+import type { RecipeResource } from '../../../infrastructure/json-api/resources/recipe';
 
 @Component({
   selector: 'app-category-recipes',
@@ -17,21 +19,21 @@ import { RECIPE_QUERY_SERVICE } from '../../../infrastructure/di/query-services'
   styleUrl: './category-recipes.scss',
 })
 export class CategoryRecipes implements OnInit {
-  public readonly category = signal<Category | null>(null);
-  public readonly recipes = signal<Recipe[]>([]);
+  private readonly categoryQueryService: DevourCategoryQueryService;
+  private readonly recipeQueryService: DevourRecipeQueryService;
+  private readonly route: ActivatedRoute;
+
+  public readonly category = signal<CategoryResource | null>(null);
+  public readonly recipes = signal<RecipeResource[]>([]);
   public readonly isLoading = signal(false);
   public readonly errorMessage = signal<string | null>(null);
 
-  private readonly categoryRepository: ICategoryRepository;
-  private readonly recipeQueryService: IRecipeQueryService;
-  private readonly route: ActivatedRoute;
-
   constructor(
-    @Inject(CATEGORY_REPOSITORY) categoryRepository: ICategoryRepository,
-    @Inject(RECIPE_QUERY_SERVICE) recipeQueryService: IRecipeQueryService,
+    @Inject(CATEGORY_QUERY_SERVICE) categoryQueryService: DevourCategoryQueryService,
+    @Inject(RECIPE_QUERY_SERVICE) recipeQueryService: DevourRecipeQueryService,
     route: ActivatedRoute,
   ) {
-    this.categoryRepository = categoryRepository;
+    this.categoryQueryService = categoryQueryService;
     this.recipeQueryService = recipeQueryService;
     this.route = route;
   }
@@ -43,24 +45,19 @@ export class CategoryRecipes implements OnInit {
       this.errorMessage.set('Invalid category id');
       return;
     }
+
     this.isLoading.set(true);
     this.errorMessage.set(null);
 
     try {
-      const category = await this.categoryRepository.getById(id);
+      const category = await this.categoryQueryService.getById(id);
       this.category.set(category);
 
-      if (category) {
-        const pageSize = 50;
-        const pageNumber = 1;
+      const pageNumber = 1;
+      const pageSize = 50;
+      const result = await this.recipeQueryService.getByCategoryId(id, pageNumber, pageSize);
 
-        const recipes = await this.recipeQueryService.getAllByCategoryPaged(
-          category,
-          pageSize,
-          pageNumber,
-        );
-        this.recipes.set(recipes);
-      }
+      this.recipes.set(result.data);
     } catch (error) {
       this.errorMessage.set('Failed to load related recipes.');
       console.error(error);

@@ -1,7 +1,5 @@
-export class Ingredient {
-  constructor(
-    public readonly name: string,
-    public readonly amount: number,
-    public readonly unit: string,
-  ) {}
-}
+export type Ingredient = Readonly<{
+  name: string;
+  amount: number;
+  unit: string;
+}>;
