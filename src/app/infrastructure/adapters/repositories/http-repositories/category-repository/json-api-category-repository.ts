@@ -30,24 +30,6 @@ export class JsonApiCategoryRepository implements ICategoryRepository {
     return this.mapToDomain(deserialized);
   }
 
-  public async getAll(): Promise<Category[]> {
-    const rawResponse = await firstValueFrom(
-      this.httpClient.get<Record<string, unknown>>(JsonApiCategoryRepository.baseUrl, {
-        headers: JsonApiCategoryRepository.headers,
-      }),
-    );
-
-    const deserialized = this.jsona.deserialize(rawResponse) as
-      | DeserializedCategory[]
-      | { collection: DeserializedCategory[] };
-
-    const items: DeserializedCategory[] = Array.isArray(deserialized)
-      ? deserialized
-      : deserialized.collection || [];
-
-    return items.map((item) => this.mapToDomain(item));
-  }
-
   private mapToDomain(item: DeserializedCategory): Category {
     return new Category(
       item.id,

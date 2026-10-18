@@ -5,8 +5,18 @@
         <h1 class="recipe-detail__title">{{ r.getName() }}</h1>
 
         <div class="recipe-detail__meta">
-          <span class="recipe-detail__tag">{{ r.getCategory().getName() }}</span>
+          <!-- 👇 Перебираем ВСЕ категории рецепта -->
+          @for (cat of r.getCategories(); track cat.getId()) {
+            <span class="recipe-detail__tag">{{ cat.getName() }}</span>
+          }
           <span class="recipe-detail__tag">{{ r.getCountry() }}</span>
+
+          <!-- 👇 Выводим автора рецепта -->
+          @if (r.getAuthor(); as author) {
+            <span class="recipe-detail__tag" style="background: #e6f4ea; color: #1e8e3e;">
+              By {{ author.getFirstName() }} {{ author.getLastName() }}
+            </span>
+          }
         </div>
       </header>
 
@@ -27,12 +37,18 @@
           <section class="recipe-detail__section">
             <h2 class="recipe-detail__subtitle">Ingredients</h2>
             <ul class="recipe-detail__ingredients">
-              @for (ing of r.getIngredients(); track ing) {
-                <li>{{ ing }}</li>
+              @for (ing of r.getIngredients(); track ing.name) {
+                <li>{{ ing.amount }} {{ ing.unit }} {{ ing.name }}</li>
+              } @empty {
+                <li>No ingredients listed.</li>
               }
             </ul>
           </section>
         </div>
+      </div>
+
+      <div class="recipe-detail__footer" style="text-align: center; margin-top: 2rem;">
+        <a routerLink="/categories" class="back-btn" style="color: #666; text-decoration: underline;">Back to categories</a>
       </div>
     </article>
   } @else {

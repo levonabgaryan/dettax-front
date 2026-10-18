@@ -2,6 +2,7 @@ import { Recipe } from '../../../domain/entities/recipe';
 import { Ingredient } from '../../../domain/value-objects/ingredient';
 
 export interface IRecipeRepository {
+  getById(id: string): Promise<Recipe>;
   create(dto: CreateRecipeDTO): Promise<Recipe>;
   update(updatedRecipe: Recipe): Promise<Recipe>;
 }

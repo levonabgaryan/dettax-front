@@ -1,5 +1,6 @@
-import { HttpClient, HttpHeaders } from '@angular/common/http';
+import { HttpClient, HttpHeaders, HttpParams } from '@angular/common/http';
 import { firstValueFrom } from 'rxjs';
+import { Jsona } from 'jsona';
 import {
   CreateRecipeDTO,
   IRecipeRepository,
@@ -7,6 +8,7 @@ import {
 import { Recipe } from '../../../../../core/domain/entities/recipe';
 import { Ingredient } from '../../../../../core/domain/value-objects/ingredient';
 import { Category } from '../../../../../core/domain/entities/category';
+import { Author } from '../../../../../core/domain/entities/author';
 
 export class JsonApiRecipeRepository implements IRecipeRepository {
   private static readonly baseUrl = 'http://localhost:5247/recipes';
@@ -16,14 +18,31 @@ export class JsonApiRecipeRepository implements IRecipeRepository {
   });
 
   private readonly httpClient: HttpClient;
+  private readonly jsona: Jsona;
 
   constructor(httpClient: HttpClient) {
     this.httpClient = httpClient;
+    this.jsona = new Jsona();
+  }
+
+  public async getById(id: string): Promise<Recipe> {
+    const url = `${JsonApiRecipeRepository.baseUrl}/${id}`;
+
+    const params = new HttpParams().append('include', 'author,categories');
+
+    const rawResponse = await firstValueFrom(
+      this.httpClient.get<Record<string, unknown>>(url, {
+        headers: JsonApiRecipeRepository.headers,
+        params: params,
+      }),
+    );
+
+    const deserialized = this.jsona.deserialize(rawResponse) as DeserializedRecipe;
+
+    return this.mapJsonaToDomain(deserialized);
   }
 
   public async create(dto: CreateRecipeDTO): Promise<Recipe> {
-    // ─── Step 1: Create the recipe base entity ──────────────────────
-    // JSON:API requires creating the resource first without to-many relationships.
     const payload = {
       data: {
         type: 'recipes',
@@ -54,9 +73,6 @@ export class JsonApiRecipeRepository implements IRecipeRepository {
 
     const createdRecipeId = response.data.id;
 
-    // ─── Step 2: Attach categories (if any) ─────────────────────────
-    // Because the backend does not support adding categories during recipe creation,
-    // we have to make a separate request to the relationships' endpoint.
     if (dto.categoriesIds && dto.categoriesIds.size > 0) {
       const categoriesPayload = {
         data: Array.from(dto.categoriesIds).map((categoryId) => ({
@@ -65,7 +81,6 @@ export class JsonApiRecipeRepository implements IRecipeRepository {
         })),
       };
 
-      // This request returns 204 No Content on success
       await firstValueFrom(
         this.httpClient.post(
           `${JsonApiRecipeRepository.baseUrl}/${createdRecipeId}/relationships/categories`,
@@ -75,9 +90,6 @@ export class JsonApiRecipeRepository implements IRecipeRepository {
       );
     }
 
-    // ─── Step 3: Map to Domain Entity ───────────────────────────────
-    // We pass the categoriesIds to the mapper so the returned Recipe object
-    // already knows about its categories, even though the server didn't return them.
     return this.mapResponseToDomain(response.data, undefined, dto.categoriesIds);
   }
 
@@ -118,19 +130,12 @@ export class JsonApiRecipeRepository implements IRecipeRepository {
     newCategoriesIds?: Set<string>,
   ): Recipe {
     const attrs = data.attributes;
-
     const ingredients = attrs.ingredients.map((i) => new Ingredient(i.name, i.amount, i.unit));
-
     const author = existing ? existing.getAuthor() : null;
-
-    // If we just created a recipe, we use the IDs we sent to construct stub categories.
-    // If we are updating, we keep the existing ones.
     const categories = new Set<Category>(existing ? existing.getCategories() : []);
 
     if (newCategoriesIds) {
       for (const catId of newCategoriesIds) {
-        // We create a stub Category with only the ID.
-        // If the UI needs the full category name/img, it should call getById() later.
         categories.add(new Category(catId, '', null, null, new Date(), new Date()));
       }
     }
@@ -148,7 +153,55 @@ export class JsonApiRecipeRepository implements IRecipeRepository {
       new Date(attrs.updatedAt),
     );
   }
+
+  private mapJsonaToDomain(item: DeserializedRecipe): Recipe {
+    const author = item.author
+      ? new Author(
+        item.author.id,
+        item.author.firstName,
+        item.author.lastName,
+        item.author.email,
+        new Set(),
+        new Date(item.author.createdAt || Date.now()),
+        new Date(item.author.updatedAt || Date.now()),
+      )
+      : null;
+
+    const categories = new Set<Category>();
+    if (item.categories && Array.isArray(item.categories)) {
+      for (const cat of item.categories) {
+        categories.add(
+          new Category(
+            cat.id,
+            cat.title,
+            cat.description,
+            cat.imgUrl,
+            new Date(cat.createdAt),
+            new Date(cat.updatedAt),
+          ),
+        );
+      }
+    }
+
+    const ingredients = (item.ingredients || []).map(
+      (i) => new Ingredient(i.name, i.amount, i.unit),
+    );
+
+    return new Recipe(
+      item.id,
+      item.title,
+      item.country,
+      categories,
+      author,
+      item.description,
+      ingredients,
+      item.imageUrl,
+      new Date(item.createdAt),
+      new Date(item.updatedAt),
+    );
+  }
 }
+
 
 export interface IngredientJsonApi {
   name: string;
@@ -187,4 +240,32 @@ export interface RecipeResourceJsonApi {
 export interface RecipeDocumentJsonApi {
   links: { self: string };
   data: RecipeResourceJsonApi;
+}
+
+
+interface DeserializedRecipe {
+  id: string;
+  title: string;
+  country: string;
+  description: string | null;
+  imageUrl: string | null;
+  ingredients: IngredientJsonApi[];
+  createdAt: string;
+  updatedAt: string;
+  author?: {
+    id: string;
+    firstName: string;
+    lastName: string;
+    email: string;
+    createdAt?: string;
+    updatedAt?: string;
+  } | null;
+  categories?: {
+    id: string;
+    title: string;
+    description: string | null;
+    imgUrl: string | null;
+    createdAt: string;
+    updatedAt: string;
+  }[];
 }

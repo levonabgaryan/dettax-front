@@ -2,7 +2,7 @@ import { EntityBase } from './entityBase';
 import { Recipe } from './recipe';
 
 export class Author extends EntityBase {
-  private name: string;
+  private firstName: string;
   private lastName: string;
   private readonly email: string;
   private readonly recipes: Set<Recipe>;
@@ -17,18 +17,18 @@ export class Author extends EntityBase {
     updatedAt: Date,
   ) {
     super(id, createdAt, updatedAt);
-    this.name = name;
+    this.firstName = name;
     this.lastName = lastName;
     this.email = email;
     this.recipes = new Set(recipes);
   }
 
-  public getName(): string {
-    return this.name;
+  public getFirstName(): string {
+    return this.firstName;
   }
 
   public setName(newName: string): void {
-    this.name = newName;
+    this.firstName = newName;
   }
 
   public getLastName(): string {

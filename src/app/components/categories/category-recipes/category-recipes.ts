@@ -5,7 +5,6 @@ import { ICategoryRepository } from '../../../core/application/ports/repositorie
 import { IRecipeQueryService } from '../../../core/application/ports/query-services/recipe-query-service';
 import { CATEGORY_REPOSITORY } from '../../../infrastructure/di/repositories';
 import { ActivatedRoute, RouterLink } from '@angular/router';
-import { EntitiesNotLoadedError } from '../../../core/application/errors/entities-not-loaded-error';
 import { AsyncState } from '../../shared/async-state/async-state';
 import { NgOptimizedImage } from '@angular/common';
 import { RECIPE_QUERY_SERVICE } from '../../../infrastructure/di/query-services';
@@ -38,9 +37,9 @@ export class CategoryRecipes implements OnInit {
   }
 
   public async ngOnInit(): Promise<void> {
-    const id = Number(this.route.snapshot.paramMap.get('id'));
+    const id = this.route.snapshot.paramMap.get('id');
 
-    if (isNaN(id)) {
+    if (!id) {
       this.errorMessage.set('Invalid category id');
       return;
     }
@@ -50,15 +49,18 @@ export class CategoryRecipes implements OnInit {
     try {
       const category = await this.categoryRepository.getById(id);
       this.category.set(category);
-      if (category !== null) {
-        this.recipes.set(await this.recipeQueryService.findByCategoryId(category.getName()));
+
+      if (category) {
+        const recipes = await this.recipeQueryService.getAllByCategoryPaged(
+          category,
+          1,
+          50
+        );
+        this.recipes.set(recipes);
       }
     } catch (error) {
-      this.errorMessage.set(
-        error instanceof EntitiesNotLoadedError
-          ? 'Failed to load related recipes'
-          : 'Unknown error',
-      );
+      this.errorMessage.set('Failed to load related recipes.');
+      console.error(error);
     } finally {
       this.isLoading.set(false);
     }

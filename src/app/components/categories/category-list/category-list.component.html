@@ -5,24 +5,40 @@
     <div class="categories-list">
       @for (categoryCard of allCategories(); track categoryCard.getId()) {
         <section class="category-card">
+
           @if (categoryCard.getImgUrl(); as imgUrl) {
             <img [ngSrc]="imgUrl" [alt]="categoryCard.getName()" width="320" height="200" />
-
-            <div class="category-card__content">
-              <h2 class="category-name">{{ categoryCard.getName() }}</h2>
-              <p class="category-description">{{ categoryCard.getDescription() }}</p>
-
-              <a [routerLink]="['/category', categoryCard.getId()]" class="more-btn"> More </a>
-              <a
-                [routerLink]="['/category', categoryCard.getId(), 'recipes']"
-                class="related-recipes-btn"
-              >
-                Related Recipes
-              </a>
-            </div>
+          } @else {
+            <div class="placeholder-image" style="width: 320px; height: 200px; background: #eee; display: flex; align-items: center; justify-content: center;">No Image</div>
           }
+
+          <div class="category-card__content">
+            <h2 class="category-name">{{ categoryCard.getName() }}</h2>
+            <p class="category-description">{{ categoryCard.getDescription() }}</p>
+
+            <a [routerLink]="['/category', categoryCard.getId()]" class="more-btn"> More </a>
+            <a [routerLink]="['/category', categoryCard.getId(), 'recipes']" class="related-recipes-btn">
+              Related Recipes
+            </a>
+          </div>
+
         </section>
+      } @empty {
+        <p>No categories found.</p>
       }
+    </div>
+
+    <div class="pagination-controls" style="margin-top: 2rem; display: flex; gap: 1rem; justify-content: center;">
+      <button
+        (click)="prevPage()"
+        [disabled]="pageNumber() === 1"
+        class="btn-prev">
+        Previous
+      </button>
+
+      <span class="page-info">Page {{ pageNumber() }}</span>
+
+      <button (click)="nextPage()" class="btn-next">Next</button>
     </div>
   </section>
 </app-async-state>
