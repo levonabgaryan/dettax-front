@@ -6,12 +6,14 @@ import { CategoryRecipes } from './components/categories/category-recipes/catego
 import { RecipeList } from './components/recipes/recipe-list/recipe-list.component';
 import { CallbackComponent } from './components/callback/callback';
 import { authGuard } from './infrastructure/services/auth.service';
-import { UserProfile } from './components/user-profile/user-profile';
+import { UserProfileComponent } from './components/user-profile/user-profile.component';
+import { CreateRecipeComponent } from './components/create-recipe-component/create-recipe-component';
 
 export const routes: Routes = [
   { path: 'callback', component: CallbackComponent },
-  { path: 'profile', component: UserProfile, canActivate: [authGuard] },
+  { path: 'profile', component: UserProfileComponent, canActivate: [authGuard] },
   { path: 'recipes', component: RecipeList },
+  { path: 'recipes/create', component: CreateRecipeComponent, canActivate: [authGuard] },
   { path: 'recipe/:id', component: RecipeDetail },
   { path: 'categories', component: CategoryList },
   { path: 'category/:id', component: CategoryDetail },

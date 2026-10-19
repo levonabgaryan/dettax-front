@@ -82,8 +82,19 @@ export class AuthService {
   private getUserIdFromToken(token: string | null): string | null {
     if (!token) return null;
     try {
-      const payload = token.split('.')[1];
-      const decoded = JSON.parse(atob(payload));
+      const base64Url = token.split('.')[1];
+      const base64 = base64Url.replace(/-/g, '+').replace(/_/g, '/');
+
+      const paddedBase64 = base64.padEnd(base64.length + (4 - (base64.length % 4)) % 4, '=');
+
+      const jsonPayload = decodeURIComponent(
+        window.atob(paddedBase64)
+          .split('')
+          .map((c) => '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2))
+          .join('')
+      );
+
+      const decoded = JSON.parse(jsonPayload);
       return decoded.sub || null;
     } catch (e) {
       console.error('Failed to decode token', e);

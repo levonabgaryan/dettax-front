@@ -4,12 +4,12 @@
     <a routerLink="/recipes/create" class="btn-create">+ Create New Recipe</a>
   </div>
 
-  <app-async-state
-    [isLoading]="isLoading()"
-    [error]="errorMessage()"
-  ></app-async-state>
+  @if (isLoading()) {
+    <div class="loading-state">Loading your recipes...</div>
+  } @else if (errorMessage()) {
+    <div class="error-state">{{ errorMessage() }}</div>
+  } @else {
 
-  @if (!isLoading() && !errorMessage()) {
     @if (myRecipes().length === 0) {
       <div class="empty-state">
         <p>You haven't created any recipes yet.</p>

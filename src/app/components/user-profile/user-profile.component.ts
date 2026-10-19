@@ -2,7 +2,6 @@ import { Component, OnInit, signal, computed, inject } from '@angular/core';
 import { NgOptimizedImage } from '@angular/common';
 import { Router, RouterLink } from '@angular/router';
 
-import { AsyncState } from '../shared/async-state/async-state';
 import { RECIPE_QUERY_SERVICE } from '../../infrastructure/di/query-services';
 import { RECIPE_REPOSITORY } from '../../infrastructure/di/repositories';
 import type { DevourRecipeQueryService } from '../../infrastructure/json-api/query-services/recipe-query.service';
@@ -13,11 +12,11 @@ import { AuthService } from '../../infrastructure/services/auth.service';
 @Component({
   selector: 'app-user-profile',
   standalone: true,
-  imports: [NgOptimizedImage, AsyncState, RouterLink],
+  imports: [NgOptimizedImage, RouterLink],
   templateUrl: './user-profile.component.html',
   styleUrl: './user-profile.component.scss',
 })
-export class UserProfile implements OnInit {
+export class UserProfileComponent implements OnInit {
   private readonly recipeQueryService = inject<DevourRecipeQueryService>(RECIPE_QUERY_SERVICE);
   private readonly recipeRepository = inject<IRecipeRepository>(RECIPE_REPOSITORY);
   private readonly authService = inject(AuthService);
