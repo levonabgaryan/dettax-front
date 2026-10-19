@@ -26,7 +26,9 @@
   border-radius: 8px;
   overflow: hidden;
   background: #fff;
-  transition: transform 0.2s ease, box-shadow 0.2s ease;
+  transition:
+    transform 0.2s ease,
+    box-shadow 0.2s ease;
 
   &:hover {
     transform: translateY(-4px);
@@ -98,7 +100,9 @@
 
   .more-btn {
     background-color: #f5f5f5;
-    &:hover { background-color: #e0e0e0; }
+    &:hover {
+      background-color: #e0e0e0;
+    }
   }
 }
 
@@ -109,7 +113,8 @@
   gap: 0.5rem;
   margin-top: 3rem;
 
-  .btn-page, .btn-page-number {
+  .btn-page,
+  .btn-page-number {
     padding: 0.5rem 1rem;
     border: 1px solid #ddd;
     background: #fff;

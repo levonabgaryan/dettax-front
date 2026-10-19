@@ -27,9 +27,7 @@ export class CategoryList implements OnInit {
   public readonly pageSize = signal(6);
   public readonly totalItems = signal(0);
 
-  public readonly totalPages = computed(() =>
-    Math.ceil(this.totalItems() / this.pageSize()),
-  );
+  public readonly totalPages = computed(() => Math.ceil(this.totalItems() / this.pageSize()));
 
   public readonly pages = computed(() =>
     Array.from({ length: this.totalPages() }, (_, i) => i + 1),

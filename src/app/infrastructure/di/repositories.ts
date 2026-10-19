@@ -9,8 +9,6 @@ import type { ICategoryRepository } from '../../core/application/ports/repositor
 // TypeScript for type-checking, so we pass the token instead of the
 // interface name.
 
-export const RECIPE_REPOSITORY =
-  new InjectionToken<IRecipeRepository>('RECIPE_REPOSITORY');
+export const RECIPE_REPOSITORY = new InjectionToken<IRecipeRepository>('RECIPE_REPOSITORY');
 
-export const CATEGORY_REPOSITORY =
-  new InjectionToken<ICategoryRepository>('CATEGORY_REPOSITORY');
+export const CATEGORY_REPOSITORY = new InjectionToken<ICategoryRepository>('CATEGORY_REPOSITORY');

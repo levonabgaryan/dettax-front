@@ -1,0 +1,149 @@
+.modal-backdrop {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background-color: rgba(0, 0, 0, 0.4);
+  backdrop-filter: blur(4px);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
+}
+
+.modal-content {
+  background: #fff;
+  padding: 3rem;
+  border-radius: 2rem;
+  width: 100%;
+  max-width: 450px;
+  position: relative;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15);
+  animation: slideUp 0.3s ease-out;
+
+  h2 {
+    margin-top: 0;
+    margin-bottom: 2rem;
+    color: #2c2b2b;
+    font-size: 2.4rem;
+    text-align: center;
+  }
+}
+
+@keyframes slideUp {
+  from { transform: translateY(20px); opacity: 0; }
+  to { transform: translateY(0); opacity: 1; }
+}
+
+.close-btn {
+  position: absolute;
+  top: 1.5rem;
+  right: 1.5rem;
+  background: none;
+  border: none;
+  font-size: 2rem;
+  cursor: pointer;
+  color: #999;
+  transition: color 0.2s;
+
+  &:hover {
+    color: #2c2b2b;
+  }
+}
+
+.form-group {
+  display: flex;
+  flex-direction: column;
+  margin-bottom: 1.5rem;
+  gap: 0.5rem;
+
+  label {
+    font-size: 1.4rem;
+    font-weight: 500;
+    color: #2c2b2b;
+  }
+
+  input {
+    padding: 1rem 1.5rem;
+    border: 1px solid #e0e0e0;
+    border-radius: 1rem;
+    font-size: 1.4rem;
+    outline: none;
+    transition: border-color 0.2s;
+
+    &:focus {
+      border-color: #ffdb63;
+      box-shadow: 0 0 0 2px rgba(255, 219, 99, 0.3);
+    }
+
+    &.ng-invalid.ng-touched {
+      border-color: #ff4d4f;
+    }
+  }
+
+  .error {
+    color: #ff4d4f;
+    font-size: 1.2rem;
+  }
+}
+
+.actions {
+  display: flex;
+  justify-content: space-between;
+  gap: 1rem;
+  margin-top: 2rem;
+
+  button {
+    flex: 1;
+    padding: 1rem;
+    border-radius: 1rem;
+    font-size: 1.4rem;
+    font-weight: bold;
+    cursor: pointer;
+    transition: all 0.2s;
+    border: none;
+  }
+
+  .btn-cancel {
+    background-color: #f5f2f2;
+    color: #2c2b2b;
+
+    &:hover:not(:disabled) {
+      background-color: #e5e0e0;
+    }
+  }
+
+  .btn-submit {
+    background-color: #ffdb63;
+    color: #2c2b2b;
+
+    &:hover:not(:disabled) {
+      background-color: #e6c454;
+      transform: translateY(-1px);
+    }
+
+    &:disabled {
+      opacity: 0.6;
+      cursor: not-allowed;
+    }
+  }
+}
+
+.alert {
+  padding: 1rem;
+  border-radius: 1rem;
+  margin-bottom: 1.5rem;
+  font-size: 1.4rem;
+  text-align: center;
+
+  &-error {
+    background-color: #ffe6e6;
+    color: #ff4d4f;
+  }
+
+  &-success {
+    background-color: #e6f7eb;
+    color: #28a745;
+  }
+}

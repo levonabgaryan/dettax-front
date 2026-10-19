@@ -4,8 +4,10 @@ import { CategoryList } from './components/categories/category-list/category-lis
 import { CategoryDetail } from './components/categories/category-detail/category-detail';
 import { CategoryRecipes } from './components/categories/category-recipes/category-recipes';
 import { RecipeList } from './components/recipes/recipe-list/recipe-list.component';
+import { CallbackComponent } from './components/callback/callback';
 
 export const routes: Routes = [
+  { path: 'callback', component: CallbackComponent },
   { path: 'recipes', component: RecipeList },
   { path: 'recipe/:id', component: RecipeDetail },
   { path: 'categories', component: CategoryList },

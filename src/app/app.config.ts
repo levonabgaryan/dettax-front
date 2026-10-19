@@ -1,6 +1,6 @@
 import { ApplicationConfig, provideBrowserGlobalErrorListeners } from '@angular/core';
 import { provideRouter } from '@angular/router';
-import { HttpClient, provideHttpClient } from '@angular/common/http';
+import { HttpClient, provideHttpClient, withInterceptors } from '@angular/common/http';
 import { JsonApi } from 'devour-client-ts';
 
 import { routes } from './app.routes';
@@ -17,12 +17,13 @@ import {
 } from './infrastructure/di/query-services';
 
 import { HttpUserService } from './infrastructure/services/http-user-service';
+import { authInterceptor } from './infrastructure/interceptors/auth.interceptor';
 
 export const appConfig: ApplicationConfig = {
   providers: [
     provideBrowserGlobalErrorListeners(),
     provideRouter(routes),
-    provideHttpClient(),
+    provideHttpClient(withInterceptors([authInterceptor])),
 
     // ─── JsonApi (singleton) ──────────────────────────────────
     {

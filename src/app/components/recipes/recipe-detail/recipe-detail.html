@@ -11,7 +11,7 @@
           <span class="recipe-detail__tag">{{ r.country }}</span>
 
           @if (r.author; as author) {
-            <span class="recipe-detail__tag" style="background: #e6f4ea; color: #1e8e3e;">
+            <span class="recipe-detail__tag" style="background: #e6f4ea; color: #1e8e3e">
               By {{ author.firstName }} {{ author.lastName }}
             </span>
           }
@@ -45,11 +45,11 @@
         </div>
       </div>
 
-      <div class="recipe-detail__footer" style="text-align: center; margin-top: 2rem;">
+      <div class="recipe-detail__footer" style="text-align: center; margin-top: 2rem">
         <a
           routerLink="/categories"
           class="back-btn"
-          style="color: #666; text-decoration: underline;"
+          style="color: #666; text-decoration: underline"
         >
           Back to categories
         </a>

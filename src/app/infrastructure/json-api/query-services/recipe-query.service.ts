@@ -74,9 +74,7 @@ export class DevourRecipeQueryService {
       }),
     );
 
-    const deserialized = this.jsona.deserialize(raw as never) as
-      | RecipeResource
-      | RecipeResource[];
+    const deserialized = this.jsona.deserialize(raw as never) as RecipeResource | RecipeResource[];
     const data = Array.isArray(deserialized) ? deserialized : [deserialized];
 
     return {

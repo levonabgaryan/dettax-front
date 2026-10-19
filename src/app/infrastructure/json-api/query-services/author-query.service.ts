@@ -40,9 +40,7 @@ export class DevourAuthorQueryService {
       }),
     );
 
-    const deserialized = this.jsona.deserialize(raw as never) as
-      | AuthorResource
-      | AuthorResource[];
+    const deserialized = this.jsona.deserialize(raw as never) as AuthorResource | AuthorResource[];
     const data = Array.isArray(deserialized) ? deserialized : [deserialized];
 
     return {

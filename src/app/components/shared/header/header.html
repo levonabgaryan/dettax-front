@@ -12,8 +12,22 @@
         <li><a href="#">About Us</a></li>
       </ul>
     </nav>
-    <div class="header-content__search">
-      <input type="text" placeholder="Search for a recipe" />
+
+    <div class="header-content__right">
+      <div class="header-content__search">
+        <input type="text" placeholder="Search for a recipe" />
+      </div>
+
+      @if (!authService.token()) {
+        <button class="btn-auth" (click)="authService.login()">Log In</button>
+        <button class="btn-register" (click)="isRegisterModalOpen = true">Register</button>
+      } @else {
+        <button class="btn-auth btn-logout" (click)="authService.logout()">Log Out</button>
+      }
     </div>
   </div>
 </header>
+
+@if (isRegisterModalOpen) {
+  <app-user-register-modal (closeModal)="isRegisterModalOpen = false"></app-user-register-modal>
+}

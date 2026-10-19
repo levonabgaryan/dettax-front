@@ -5,7 +5,6 @@
     <div class="recipes-grid">
       @for (recipe of allRecipes(); track recipe.id) {
         <article class="recipe-card">
-
           @if (recipe.imageUrl) {
             <img
               [ngSrc]="recipe.imageUrl"
@@ -43,7 +42,8 @@
         <button
           (click)="goToPage(pageNumber() - 1)"
           [disabled]="pageNumber() === 1"
-          class="btn-page">
+          class="btn-page"
+        >
           &larr; Prev
         </button>
 
@@ -51,7 +51,8 @@
           <button
             (click)="goToPage(page)"
             [class.active]="page === pageNumber()"
-            class="btn-page-number">
+            class="btn-page-number"
+          >
             {{ page }}
           </button>
         }
@@ -59,7 +60,8 @@
         <button
           (click)="goToPage(pageNumber() + 1)"
           [disabled]="pageNumber() === totalPages()"
-          class="btn-page">
+          class="btn-page"
+        >
           Next &rarr;
         </button>
       </div>

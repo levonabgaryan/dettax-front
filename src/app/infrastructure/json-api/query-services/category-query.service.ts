@@ -41,8 +41,7 @@ export class DevourCategoryQueryService {
     );
 
     const deserialized = this.jsona.deserialize(raw as never) as
-      | CategoryResource
-      | CategoryResource[];
+      CategoryResource | CategoryResource[];
     const data = Array.isArray(deserialized) ? deserialized : [deserialized];
 
     return {
