@@ -4,6 +4,7 @@ import { Ingredient } from '../../../domain/value-objects/ingredient';
 export interface IRecipeRepository {
   create(dto: CreateRecipeDTO): Promise<Recipe>;
   update(updatedRecipe: Recipe): Promise<Recipe>;
+  delete(id: string): Promise<void>;
 }
 
 export type CreateRecipeDTO = Readonly<{

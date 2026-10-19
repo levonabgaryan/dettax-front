@@ -1,6 +1,6 @@
 import { inject, Injectable, signal } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
-import { Router } from '@angular/router';
+import { CanActivateFn, Router } from '@angular/router';
 import { firstValueFrom } from 'rxjs';
 
 @Injectable({
@@ -12,6 +12,11 @@ export class AuthService {
 
   private readonly _token = signal<string | null>(localStorage.getItem('access_token'));
   public readonly token = this._token.asReadonly();
+
+  private readonly _userId = signal<string | null>(
+    this.getUserIdFromToken(localStorage.getItem('access_token')),
+  );
+  public readonly userId = this._userId.asReadonly();
 
   private readonly identityUrl = 'http://localhost:5291';
   private readonly clientId = 'dettax-frontend';
@@ -55,6 +60,7 @@ export class AuthService {
 
       localStorage.setItem('access_token', res.access_token);
       this._token.set(res.access_token);
+      this._userId.set(this.getUserIdFromToken(res.access_token));
       localStorage.removeItem('code_verifier');
 
       await this.router.navigate(['/']);
@@ -67,9 +73,22 @@ export class AuthService {
   public logout(): void {
     localStorage.removeItem('access_token');
     this._token.set(null);
+    this._userId.set(null);
 
     const postLogoutRedirect = encodeURIComponent('http://localhost:3000/');
     window.location.href = `${this.identityUrl}/connect/logout?post_logout_redirect_uri=${postLogoutRedirect}`;
+  }
+
+  private getUserIdFromToken(token: string | null): string | null {
+    if (!token) return null;
+    try {
+      const payload = token.split('.')[1];
+      const decoded = JSON.parse(atob(payload));
+      return decoded.sub || null;
+    } catch (e) {
+      console.error('Failed to decode token', e);
+      return null;
+    }
   }
 
   // ─── PKCE HELPERS ───────────────────────────────────────────
@@ -102,3 +121,14 @@ export interface TokenResponse {
   refresh_token?: string;
   scope: string;
 }
+
+export const authGuard: CanActivateFn = () => {
+  const authService = inject(AuthService);
+
+  if (authService.token()) {
+    return true;
+  }
+
+  authService.login();
+  return false;
+};

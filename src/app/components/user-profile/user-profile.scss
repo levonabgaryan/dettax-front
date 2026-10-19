@@ -1,0 +1,133 @@
+.profile-container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 4rem 2rem;
+}
+
+.profile-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 3rem;
+
+  h1 {
+    font-size: 3rem;
+    color: #2c2b2b;
+    margin: 0;
+  }
+
+  .btn-create {
+    padding: 1rem 2rem;
+    background-color: #ffdb63;
+    color: #2c2b2b;
+    text-decoration: none;
+    border-radius: 999px;
+    font-weight: bold;
+    transition: background-color 0.2s;
+
+    &:hover {
+      background-color: #e6c454;
+    }
+  }
+}
+
+.empty-state {
+  text-align: center;
+  padding: 5rem 0;
+  background: #f9f9f9;
+  border-radius: 2rem;
+  color: #666;
+  font-size: 1.6rem;
+}
+
+.recipe-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  gap: 2rem;
+}
+
+.recipe-card {
+  border: 1px solid #e0e0e0;
+  border-radius: 1rem;
+  overflow: hidden;
+  background: #fff;
+  box-shadow: 0 4px 6px rgba(0,0,0,0.05);
+  transition: transform 0.2s;
+
+  &:hover {
+    transform: translateY(-5px);
+  }
+
+  img {
+    width: 100%;
+    height: 200px;
+    object-fit: cover;
+  }
+
+  .card-content {
+    padding: 1.5rem;
+
+    h3 { margin: 0 0 0.5rem; font-size: 1.8rem; color: #2c2b2b; }
+    .country { color: #888; margin: 0 0 1.5rem; font-size: 1.4rem; }
+  }
+}
+
+.card-actions {
+  display: flex;
+  gap: 1rem;
+
+  button {
+    flex: 1;
+    padding: 0.75rem;
+    border: none;
+    border-radius: 0.75rem;
+    cursor: pointer;
+    font-weight: bold;
+    font-size: 1.4rem;
+    transition: all 0.2s;
+  }
+
+  .btn-edit {
+    background-color: #f5f2f2;
+    color: #2c2b2b;
+    &:hover { background-color: #e5e0e0; }
+  }
+
+  .btn-delete {
+    background-color: #ffe6e6;
+    color: #ff4d4f;
+    &:hover { background-color: #ff4d4f; color: white; }
+  }
+}
+
+.pagination {
+  display: flex;
+  justify-content: center;
+  gap: 0.5rem;
+  margin-top: 4rem;
+
+  button {
+    padding: 0.75rem 1.5rem;
+    border: 1px solid #ddd;
+    background: #fff;
+    cursor: pointer;
+    border-radius: 0.75rem;
+    font-size: 1.4rem;
+    transition: all 0.2s;
+
+    &.active {
+      background: #ffdb63;
+      border-color: #ffdb63;
+      font-weight: bold;
+    }
+
+    &:hover:not(:disabled) {
+      background: #f0f0f0;
+    }
+
+    &:disabled {
+      opacity: 0.5;
+      cursor: not-allowed;
+    }
+  }
+}

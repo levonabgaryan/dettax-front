@@ -1,0 +1,48 @@
+<div class="profile-container">
+  <div class="profile-header">
+    <h1>My Recipes</h1>
+    <a routerLink="/recipes/create" class="btn-create">+ Create New Recipe</a>
+  </div>
+
+  <app-async-state
+    [isLoading]="isLoading()"
+    [error]="errorMessage()"
+  ></app-async-state>
+
+  @if (!isLoading() && !errorMessage()) {
+    @if (myRecipes().length === 0) {
+      <div class="empty-state">
+        <p>You haven't created any recipes yet.</p>
+      </div>
+    } @else {
+      <div class="recipe-grid">
+        @for (recipe of myRecipes(); track recipe.id) {
+          <div class="recipe-card">
+            <img [ngSrc]="recipe.imageUrl || '/placeholder.png'" width="300" height="200" alt="recipe" />
+            <div class="card-content">
+              <h3>{{ recipe.title }}</h3>
+              <p class="country">{{ recipe.country }}</p>
+
+              <div class="card-actions">
+                <button class="btn-edit" (click)="editRecipe(recipe.id)">Edit</button>
+                <button class="btn-delete" (click)="deleteRecipe(recipe.id)">Delete</button>
+              </div>
+            </div>
+          </div>
+        }
+      </div>
+
+      @if (totalPages() > 1) {
+        <div class="pagination">
+          <button [disabled]="pageNumber() === 1" (click)="goToPage(pageNumber() - 1)">Prev</button>
+          @for (page of pages(); track page) {
+            <button [class.active]="page === pageNumber()" (click)="goToPage(page)">
+              {{ page }}
+            </button>
+          }
+          <button [disabled]="pageNumber() === totalPages()" (click)="goToPage(pageNumber() + 1)">Next</button>
+        </div>
+      }
+    }
+  }
+</div>

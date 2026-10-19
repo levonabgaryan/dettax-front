@@ -59,7 +59,6 @@ export class UserRegisterModalComponent {
         this.close();
         this.authService.login();
       }, 2000);
-
     } catch (error: unknown) {
       console.error(error);
 

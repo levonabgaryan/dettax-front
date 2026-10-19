@@ -22,6 +22,7 @@
         <button class="btn-auth" (click)="authService.login()">Log In</button>
         <button class="btn-register" (click)="isRegisterModalOpen = true">Register</button>
       } @else {
+        <a routerLink="/profile" class="btn-profile">My Profile</a>
         <button class="btn-auth btn-logout" (click)="authService.logout()">Log Out</button>
       }
     </div>

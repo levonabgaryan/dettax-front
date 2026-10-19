@@ -65,4 +65,8 @@ export class DevourRecipeRepository implements IRecipeRepository {
     // so we preserve `authorId` from the input recipe.
     return RecipeMapper.toDomain(resource, recipe.getAuthorId());
   }
+
+  public async delete(id: string): Promise<void> {
+    await firstValueFrom(this.jsonApi.destroy(`http://localhost:5247/recipes/${id}`));
+  }
 }
